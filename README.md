@@ -6,8 +6,8 @@
 1. Requirements
 1. Definition of Command Line Syntax
 1. A Note on Implementing the Command Line Parser
-1. A Note on Claiming Zombie Processes as You Go (Back to Beginning)
-1. A Note on Interruption of Slow System Calls by Signals (Back to Beginning)
+1. A Note on Claiming Zombie Processes as You Go
+1. A Note on Interruption of Slow System Calls by Signals
 
 ## Description
 
@@ -55,7 +55,7 @@ Design and implement a simple UNIX shell program using the grammar specified in 
 
     For example:  
     `% xterm &`  
-    The commannd line starts command xterm in the background (i.e., the shell will not wait for the process to terminate and you can type in the next command immediately). The following command line:  
+    The commannd line starts command `xterm` in the background (i.e., the shell will not wait for the process to terminate and you can type in the next command immediately). The following command line:  
     `% sleep 20 &  ps -l`  
     ... starts command `sleep 20` and immediately execute command `ps -l` without waiting for command `sleep 20` to finish first.
 
@@ -204,9 +204,9 @@ com_suffix=
 *** ICT310 comstruct dump end ***
 ```
 
-## A Note on Claiming Zombie Processes as You Go (Back to Beginning)
+## A Note on Claiming Zombie Processes as You Go
 
-The background commands, i.e., those with a postfix`&, are not waited for by your shell process in the main loop. As the result once they die they become zombie processes. Each zombie process would still take one entry in the Process Table. If your shell process does not clean them up they would accumulate over time. In theory this could exhaust the Process Table, thus frozen the machine. Therefore it is necessary for your shell process to claim (i.e., clean up) those zombie processes as soon as possible.
+The background commands, i.e., those with a postfix `&`, are not waited for by your shell process in the main loop. As the result once they die they become zombie processes. Each zombie process would still take one entry in the Process Table. If your shell process does not clean them up they would accumulate over time. In theory this could exhaust the Process Table, thus frozen the machine. Therefore it is necessary for your shell process to claim (i.e., clean up) those zombie processes as soon as possible.
 
 The best place to claim the zombies would be in the signal handler for `SIGCHLD`. When a process terminates, it sends a `SIGCHLD` to its parent process. However since signals are not queued, when a `SIGCHLD` arrives, it is possible that there may be more than one zombie of yours in the system. This means your signal handler should try to claim as many zombies as you can. This would involve with a loop similar to the following one:
 
@@ -226,7 +226,7 @@ The option, `WNOHANG`, is necessary so that the handler is not blocked when ther
 
 Note if you are waiting for a child using one of the wait system calls, and you have also installed signal handler for `SIGCHLD`, when `SIGCHLD` arrives, not only wait will return, but the signal handler will also be called.
 
-## A Note on Interruption of Slow System Calls by Signals (Back to Beginning)
+## A Note on Interruption of Slow System Calls by Signals
 
 Some I/O related system calls are known as slow system calls, due to the fact that they take a long time to complete. For example, read from a keyboard using system call read is a slow system call, as it would normally block the calling process until the user has typed something on the keyboard.
 
