@@ -22,7 +22,7 @@ Design and implement a simple UNIX shell program using the grammar specified in 
     The shell must have a shell built-in command prompt for changing the current prompt. For example, typing the following command:  
     `% prompt john$`  
     ... should change the shell prompt to `john$`, i.e., the second token of the command.
-	
+  
 1. **The shell built-in command pwd**
 
     This command prints the current directory (also known as working directory) of the shell process.
@@ -34,37 +34,36 @@ Design and implement a simple UNIX shell program using the grammar specified in 
 1. **Wildcard characters**
 
     If a token contains wildcard characters `*` or `?` the token is treated as a filename. The wildcard characters in such a token indicate to the shell that the filename must be expanded. For example the command:  
-	`% ls *.c`  	
-    ... may be expanded to ls ex1.c ex2.c ex3.c if there are three matching files ex1.c ex2.c ex3.c in the current directory.  	
-	You may implement this feature using the C function `glob`.
+    `% ls *.c`  
+    ... may be expanded to ls ex1.c ex2.c ex3.c if there are three matching files ex1.c ex2.c ex3.c in the current directory. You may implement this feature using the C function `glob`.
 
 1. **Standard input and output redirections > and <**
 
-    For example:  	
-	`% ls -lt >  foo`  
-	would redirect the standard output of process `ls -lt` to file `foo`. Similarly in the following command: 	
-	`% cat <  foo`  	
-	the standard input of process `cat` is redirected to file `foo`.
+    For example:  
+    `% ls -lt >  foo`  
+    would redirect the standard output of process `ls -lt` to file `foo`. Similarly in the following command:  
+    `% cat <  foo`  
+    the standard input of process `cat` is redirected to file `foo`.
 
 1. **Shell pipeline |**
 
     For example:  
-	`% ls -lt | more`  	
-	the standard output of process `ls -lt` is connected to the standard input of process `more` via a pipe.
+    `% ls -lt | more`  
+    the standard output of process `ls -lt` is connected to the standard input of process `more` via a pipe.
 
 1. **Background job execution**
 
-    For example:  	
-	`% xterm &`  	
-	The commannd line starts command xterm in the background (i.e., the shell will not wait for the process to terminate and you can type in the next command immediately). The following command line:  	
-	`% sleep 20 &  ps -l`  	
-	... starts command `sleep 20` and immediately execute command `ps -l` without waiting for command `sleep 20` to finish first.
+    For example:  
+    `% xterm &`  
+    The commannd line starts command xterm in the background (i.e., the shell will not wait for the process to terminate and you can type in the next command immediately). The following command line:  
+    `% sleep 20 &  ps -l`  
+    ... starts command `sleep 20` and immediately execute command `ps -l` without waiting for command `sleep 20` to finish first.
 
 1. **Sequential job execution**
 
     For example the command line:  
-	`%  sleep 20 ; ps -l`  
-	... starts command `sleep 20` first, and wait for it to finish, then execute command `ps -l`.
+    `%  sleep 20 ; ps -l`  
+    ... starts command `sleep 20` first, and wait for it to finish, then execute command `ps -l`.
 
 1. **The shell environment**
 
@@ -73,7 +72,7 @@ Design and implement a simple UNIX shell program using the grammar specified in 
 1. **The shell built-in command exit**
 
     Use the built-in command exit to terminate the shell program.
-	
+  
 The behaviour of the above commands (except `prompt`) should be as close to those of the Bash shell as possible. In addition, your shell should not be terminated by CTRL-C, CTRL-\, or CTRL-Z.
 
 Finally you must not use any existing shell program to implement your shell (for example by calling a shell through the function `system`). That would defeat the purpose of this project.
