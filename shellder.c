@@ -14,6 +14,19 @@ void test() {
 }
 
 /**
+ * Ignore interrupt, quit, and stop signals.
+ * Satisfies marking guide #13.
+ */
+void ignore_signals() {
+  sigset_t signal_set;
+  sigemptyset(&signal_set);
+  sigaddset(&signal_set, SIGINT);
+  sigaddset(&signal_set, SIGQUIT);
+  sigaddset(&signal_set, SIGTSTP);
+  sigprocmask(SIG_SETMASK, &signal_set, NULL);
+}
+
+/**
  * Driver program.
  * @param  {int}    argc
  * @param  {char *} argv[]
@@ -24,6 +37,10 @@ int main(int argc, char * argv[]) {
   //char shell_name[BUF_SIZE] = "%";
   char * shell_name = "%";
 
+  // ignore keyboard signals
+  ignore_signals();
+
+  // run infinite loop; prompt for input and execute commands
   while (1) {
     printf("%s ", shell_name);
     fgets(input, BUF_SIZE, stdin);
