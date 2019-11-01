@@ -7,12 +7,14 @@
 #define SEPARATOR_OUTPUT     ">"
 #define SEPARATOR_PIPE       "|"
 #define SEPARATOR_SEQUENTIAL ";"
+#define MAX_COMMANDS  100
+#define MAX_ARGUMENTS 1000
 
 typedef struct CommandStruct {
   char * name;
   char * stdin;
   char * stdout;
-  char * argv[1000];
+  char * argv[MAX_ARGUMENTS];
   int    argc;
   int    background;
   int    pipe;
@@ -192,7 +194,7 @@ int main(void) {
   //char sample[] = "date & ps -ef | grep foo; ls -l -t; cat foo.txt > /tmp/foo; cat < junk";
   //char sample[] = "cat | cat | cat | cat > junk & cat | cat | cat | cat | grep line";
   char sample[] = "ps | sort & sleep 10 & date; cat foo.txt > /tmp/foo";
-  Command * commands[100];
+  Command * commands[MAX_COMMANDS];
 
   printf("************************************************\n");
   handle_command_line(sample, 0, 0, commands);
