@@ -14,10 +14,10 @@ Command * commands[MAX_COMMANDS];
 /**
  * Methods
  */
-void test();
 void builtin_cd();
 void builtin_exit();
 void builtin_prompt();
 void builtin_pwd();
 void execute_commands();
 void ignore_signals();
+void test();

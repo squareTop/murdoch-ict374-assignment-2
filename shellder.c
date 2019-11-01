@@ -26,6 +26,18 @@ void ignore_signals() {
   sigprocmask(SIG_SETMASK, &signal_set, NULL);
 }
 
+void execute_commands() {
+  int index = 0;
+  Command * command;
+
+  while ((command = commands[index]) != NULL) {
+    printf("execute_commands | %s, %p\n", command->name, command);
+    index++;
+  }
+
+  free(command);
+}
+
 /**
  * Driver program.
  * @param  {int}    argc
@@ -38,7 +50,7 @@ int main(int argc, char * argv[]) {
   char * shell_name = "%";
 
   // ignore keyboard signals
-  ignore_signals();
+  //ignore_signals();
 
   // run infinite loop; prompt for input and execute commands
   while (1) {
@@ -51,6 +63,8 @@ int main(int argc, char * argv[]) {
     //shell_name = strdup(input);
 
     handle_command_line(input, 0, 0, commands);
+
+    execute_commands();
   }
 
   exit(0);
