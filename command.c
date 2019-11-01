@@ -64,7 +64,11 @@ int get_arguments(char * input, Command * command) {
 }
 
 /**
- * @param {char *} input
+ * Populates a Command struct with the found/required attributes.
+ * @param {char *}    input
+ * @param {int}       background
+ * @param {int}       pipe
+ * @param {Command *} command
  */
 void make_command(
   char * input,
@@ -131,15 +135,21 @@ char * get_separator(char * input) {
   return separator;
 }
 
-void handle_command_line_2(
+/**
+ * Processes a command line entry, extracts jobs and commands, and then saves
+ * these commands into an array containing Command structs.
+ * @param {char *}     input
+ * @param {int}        background
+ * @param {int}        pipe
+ * @param {Command **} commands
+ */
+void handle_command_line(
   char * input,
   int background,
   int pipe,
   Command ** commands
 ) {
-  printf("handle_command_line_2 | [%s]\n", input);
-  //printf("handle_command_line_2 | background: %d\n", background);
-  //printf("handle_command_line_2 | pipe: %d\n", pipe);
+  printf("handle_command_line | [%s]\n", input);
   int is_background = 0;
   int is_pipe       = 0;
   char * separator  = NULL;
@@ -147,6 +157,7 @@ void handle_command_line_2(
   static int command_count;
 
   if ((separator = get_separator(input)) != NULL) {
+    // separators found
     token = strtok(input, separator);
     token = strtok(NULL, "");
 
@@ -158,7 +169,8 @@ void handle_command_line_2(
       is_pipe = command_count + 1;
     }
 
-    handle_command_line_2(input, is_background, is_pipe, commands);
+    // process the input again to see if anymore separators are present
+    handle_command_line(input, is_background, is_pipe, commands);
   } else {
     // no special characters found
     make_command(input, background, pipe, commands[command_count]);
@@ -167,33 +179,7 @@ void handle_command_line_2(
 
   // run method again if input is still available
   if (token != NULL) {
-    //printf("handle_command_line_2 | token not null: [%s]\n", token);
-    handle_command_line_2(token, background, pipe, commands);
-  }
-}
-
-/**
- * @param {char *} input
- */
-void handle_command_line(char * input) {
-  printf("handle_command_line | [%s]\n", input);
-  char * token = NULL;
-
-  char * separator = get_separator(input);
-
-  if (separator != NULL) {
-    token = strtok(input, separator);
-    token = strtok(NULL, "");
-    handle_command_line(input);
-  } else {
-    // no special characters found
-    //make_command(input);
-  }
-
-  // run method again if input is still available
-  if (token != NULL) {
-    printf("handle_command_line | token not null: [%s]\n", token);
-    handle_command_line(token);
+    handle_command_line(token, background, pipe, commands);
   }
 }
 
@@ -207,7 +193,7 @@ int main(void) {
   //char sample[] = "cat | cat | cat | cat > junk & cat | cat | cat | cat | grep line";
   char sample[] = "ps | sort & sleep 10 & date; cat foo.txt > /tmp/foo";
   Command * commands[100];
+
   printf("************************************************\n");
-  //handle_command_line(sample);
-  handle_command_line_2(sample, 0, 0, commands);
+  handle_command_line(sample, 0, 0, commands);
 }
