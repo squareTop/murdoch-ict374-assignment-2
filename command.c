@@ -9,22 +9,75 @@
 #define SEPARATOR_SEQUENTIAL ";"
 
 typedef struct CommandStruct {
-  char *  name;
-  char *  stdin;
-  char *  stdout;
-  char ** argc;
-  char ** argv;
-  int     background;
-  int     pipe;
+  char * name;
+  char * stdin;
+  char * stdout;
+  char * argv[1000];
+  int    argc;
+  int    background;
+  int    pipe;
 } Command;
 
-void get_arguments(char * input, int iteration) {
-  printf("get_arguments | iteration: %d [%s]\n", iteration, input);
-  int    argument_count = 0;
-  char * arguments[100];
+/**
+ * Helper command that prints Command attributes.
+ * @param {Command *} command
+ */
+void print_command(Command * command) {
+  printf("-----------------------------------------------\n");
+  printf("| %-24s | %-16s |\n", "Name", command->name);
+  printf("| %-24s | %-16d |\n", "argc", command->argc);
+  for (int i = 0; i < command->argc; i++) {
+    printf("| argv[%d]                  | %-16s |\n", i, command->argv[i]);
+  }
+  printf("| %-24s | %-16d |\n", "Runs in background?", command->background);
+  printf("| %-24s | %-16d |\n", "Pipes to command",    command->pipe);
+  printf("| %-24s | %-16s |\n", "Redirect input",      command->stdin);
+  printf("| %-24s | %-16s |\n", "Redirect output",     command->stdout);
+  printf("-----------------------------------------------\n");
+}
+
+/**
+ * Splits a string by whitespace to extract arguments (argv).
+ * @param  {char *}    input
+ * @param  {Command *} command
+ * @return {int}
+ */
+int get_arguments(char * input, Command * command) {
+  char * token = NULL;
+  int argument_count = 0;
+
+  // split input by whitespace to derive arguments
+  token = strtok(input, " ");
+
+  while (token != NULL) {
+    // duplicate string and add to arguments array
+    command->argv[argument_count] = strdup(token);
+
+    // get the next argument
+    token = strtok(NULL, " ");
+
+    // increment count
+    argument_count++;
+  }
+
+  return argument_count;
+}
+
+/**
+ * @param {char *} input
+ */
+void make_command(
+  char * input,
+  int background,
+  int pipe,
+  Command * command
+) {
+  //printf("make_command | [%s]\n", input);
   char * token         = NULL;
   char * stdin_result  = index(input, * SEPARATOR_INPUT);
   char * stdout_result = index(input, * SEPARATOR_OUTPUT);
+
+  command = calloc(1, sizeof(Command));
 
   if (stdout_result != NULL) {
     // we found output redirection
@@ -32,35 +85,24 @@ void get_arguments(char * input, int iteration) {
 
     // get output destination
     token = strtok(NULL, " ");
-    printf("get_arguments | stdout: [%s]\n", token);
+    command->stdout = strdup(token);
+    //printf("make_command | stdout: [%s]\n", token);
   } else if (stdin_result != NULL) {
     // we found input redirection
     token = strtok(input, SEPARATOR_INPUT);
 
     // get input destination
     token = strtok(NULL, " ");
-    printf("get_arguments | stdin: [%s]\n", token);
+    command->stdin = strdup(token);
+    //printf("make_command | stdin: [%s]\n", token);
   }
 
-  // split input by whitespace to derive arguments
-  token = strtok(input, " ");
+  command->argc       = get_arguments(input, command);
+  command->name       = command->argv[0];
+  command->background = background;
+  command->pipe       = pipe;
 
-  while (token != NULL) {
-    // duplicate string and add to arguments array
-    arguments[argument_count] = strdup(token);
-
-    printf(
-      "get_arguments | arguments[%d] = [%s]\n",
-      argument_count,
-      arguments[argument_count]
-    );
-
-    // get the next argument
-    token = strtok(NULL, " ");
-    argument_count++;
-  }
-
-  printf("get_arguments | Total arguments: %d\n", argument_count);
+  print_command(command);
 }
 
 /**
@@ -85,40 +127,44 @@ char * get_separator(char * input) {
   return separator;
 }
 
-void handle_command_line_2(char * input, int iteration, int background, int pipe) {
+void handle_command_line_2(
+  char * input,
+  int background,
+  int pipe,
+  Command ** commands
+) {
   printf("handle_command_line_2 | [%s]\n", input);
-  printf("handle_command_line_2 | background: %d\n", background);
-  printf("handle_command_line_2 | pipe: %d\n", pipe);
-  printf("handle_command_line_2 | iteration: %d\n", iteration);
-  char * token = NULL;
+  //printf("handle_command_line_2 | background: %d\n", background);
+  //printf("handle_command_line_2 | pipe: %d\n", pipe);
   int is_background = 0;
-  int is_pipe = 0;
-  int current_iteration = iteration;
+  int is_pipe       = 0;
+  char * separator  = NULL;
+  char * token      = NULL;
+  static int command_count;
 
-  char * separator = get_separator(input);
-
-  if (separator != NULL) {
+  if ((separator = get_separator(input)) != NULL) {
     token = strtok(input, separator);
     token = strtok(NULL, "");
 
-    if (separator == SEPARATOR_CONCURRENT) {
+    if (strcmp(separator, SEPARATOR_CONCURRENT) == 0) {
       is_background = 1;
     }
 
-    handle_command_line_2(input, current_iteration, is_background, is_pipe);
+    if (strcmp(separator, SEPARATOR_PIPE) == 0) {
+      is_pipe = command_count + 1;
+    }
+
+    handle_command_line_2(input, is_background, is_pipe, commands);
   } else {
     // no special characters found
-    get_arguments(input, current_iteration);
-    current_iteration++;
-    printf("**** 1 current_iteration: %d\n", current_iteration);
+    make_command(input, background, pipe, commands[command_count]);
+    command_count++;
   }
-    //printf("**** 2 current_iteration: %d\n", current_iteration);
 
   // run method again if input is still available
   if (token != NULL) {
-    printf("handle_command_line_2 | token not null: [%s]\n", token);
-    printf("**** 3 current_iteration: %d\n", current_iteration);
-    handle_command_line_2(token, current_iteration, is_background, is_pipe);
+    //printf("handle_command_line_2 | token not null: [%s]\n", token);
+    handle_command_line_2(token, background, pipe, commands);
   }
 }
 
@@ -137,7 +183,7 @@ void handle_command_line(char * input) {
     handle_command_line(input);
   } else {
     // no special characters found
-    //get_arguments(input);
+    //make_command(input);
   }
 
   // run method again if input is still available
@@ -153,9 +199,11 @@ void handle_command_line(char * input) {
  */
 int main(void) {
   //char sample[] = "date -foo -bar & who & ps -ef | grep foo; ls -l -t -a; who & cat < junk; cat some.file > /tmp/foo & whoami";
-  char sample[] = "date & who & ls -lt";
-  //Command * commands[100];
-  printf("--------------------------------------------\n");
+  //char sample[] = "date & ps -ef | grep foo; ls -l -t; cat foo.txt > /tmp/foo; cat < junk";
+  //char sample[] = "cat | cat | cat | cat > junk & cat | cat | cat | cat | grep line";
+  char sample[] = "ps | sort & sleep 10";
+  Command * commands[100];
+  printf("************************************************\n");
   //handle_command_line(sample);
-  handle_command_line_2(sample, 0, 0, 0);
+  handle_command_line_2(sample, 0, 0, commands);
 }
