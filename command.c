@@ -39,7 +39,8 @@ void print_command(Command * command) {
 }
 
 /**
- * Splits a string by whitespace to extract arguments (argv).
+ * Splits a string by whitespace to extract arguments (argv) and saves them
+ * into the Command instance provided.
  * @param  {char *}    input
  * @param  {Command *} command
  * @return {int}
