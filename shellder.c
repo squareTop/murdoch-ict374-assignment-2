@@ -20,5 +20,21 @@ void test() {
  * @return {int}
  */
 int main(int argc, char * argv[]) {
+  char input[BUF_SIZE];
+  //char shell_name[BUF_SIZE] = "%";
+  char * shell_name = "%";
+
+  while (1) {
+    printf("%s ", shell_name);
+    fgets(input, BUF_SIZE, stdin);
+
+    // remove newline character
+    input[strlen(input) - 1] = '\0';
+
+    //shell_name = strdup(input);
+
+    handle_command_line(input, 0, 0, commands);
+  }
+
   exit(0);
 }
