@@ -69,25 +69,19 @@ char * get_separator(char * input) {
 }
 
 /**
- * Populates a Command struct with the found/required attributes.
- * @param {char *}    input
- * @param {int}       background
- * @param {int}       pipe
- * @param {Command *} command
+ * Populates a Command struct with the found/required attributes and returns
+ * a pointer to that instance.
+ * @param  {char *}    input
+ * @param  {int}       background
+ * @param  {int}       pipe
+ * @return {Command *}
  */
-void make_command(
-  char * input,
-  int background,
-  int pipe,
-  Command * command
-) {
+Command * make_command(char * input, int background, int pipe) {
   //printf("make_command | [%s]\n", input);
-  char * token         = NULL;
-  char * stdin_result  = index(input, * SEPARATOR_INPUT);
-  char * stdout_result = index(input, * SEPARATOR_OUTPUT);
-
-  // calloc helps initialise all the attributes in Command
-  command = calloc(1, sizeof(Command));
+  char    * token         = NULL;
+  char    * stdin_result  = index(input, * SEPARATOR_INPUT);
+  char    * stdout_result = index(input, * SEPARATOR_OUTPUT);
+  Command * command       = calloc(1, sizeof(Command));
 
   if (stdout_result != NULL) {
     // output redirection found
@@ -115,7 +109,8 @@ void make_command(
   command->background = background;
   command->pipe       = pipe;
 
-  print_command(command);
+  //print_command(command);
+  return command;
 }
 
 /**
@@ -156,7 +151,8 @@ void handle_command_line(
     handle_command_line(input, is_background, is_pipe, commands);
   } else {
     // no special characters found
-    make_command(input, background, pipe, commands[command_count]);
+    commands[command_count] = make_command(input, background, pipe);
+    //printf("make_command | %d, %p\n", command_count, commands[command_count]);
     command_count++;
   }
 

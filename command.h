@@ -20,16 +20,11 @@ typedef struct CommandStruct {
   int    pipe;
 } Command;
 
+Command * make_command(char * input, int background, int pipe);
 int    get_arguments(char * input, Command * command);
 char * get_separator(char * input);
 void   print_command(Command * command);
-void   make_command(
-  char * input,
-  int background,
-  int pipe,
-  Command * command
-);
-void handle_command_line(
+void   handle_command_line(
   char * input,
   int background,
   int pipe,
