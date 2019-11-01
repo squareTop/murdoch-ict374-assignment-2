@@ -77,26 +77,30 @@ void make_command(
   char * stdin_result  = index(input, * SEPARATOR_INPUT);
   char * stdout_result = index(input, * SEPARATOR_OUTPUT);
 
+  // calloc helps initialise all the attributes in Command
   command = calloc(1, sizeof(Command));
 
   if (stdout_result != NULL) {
-    // we found output redirection
+    // output redirection found
     token = strtok(input, SEPARATOR_OUTPUT);
 
     // get output destination
     token = strtok(NULL, " ");
+
+    // save the redirection
     command->stdout = strdup(token);
-    //printf("make_command | stdout: [%s]\n", token);
   } else if (stdin_result != NULL) {
-    // we found input redirection
+    // input redirection found
     token = strtok(input, SEPARATOR_INPUT);
 
     // get input destination
     token = strtok(NULL, " ");
+
+    // save the redirection
     command->stdin = strdup(token);
-    //printf("make_command | stdin: [%s]\n", token);
   }
 
+  // save other attributes
   command->argc       = get_arguments(input, command);
   command->name       = command->argv[0];
   command->background = background;
@@ -201,7 +205,7 @@ int main(void) {
   //char sample[] = "date -foo -bar & who & ps -ef | grep foo; ls -l -t -a; who & cat < junk; cat some.file > /tmp/foo & whoami";
   //char sample[] = "date & ps -ef | grep foo; ls -l -t; cat foo.txt > /tmp/foo; cat < junk";
   //char sample[] = "cat | cat | cat | cat > junk & cat | cat | cat | cat | grep line";
-  char sample[] = "ps | sort & sleep 10";
+  char sample[] = "ps | sort & sleep 10 & date; cat foo.txt > /tmp/foo";
   Command * commands[100];
   printf("************************************************\n");
   //handle_command_line(sample);
