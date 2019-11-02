@@ -77,7 +77,6 @@ char * get_separator(char * input) {
  * @return {Command *}
  */
 Command * make_command(char * input, int background, int pipe) {
-  //printf("make_command | [%s]\n", input);
   char    * token         = NULL;
   char    * stdin_result  = index(input, * SEPARATOR_INPUT);
   char    * stdout_result = index(input, * SEPARATOR_OUTPUT);
@@ -127,7 +126,6 @@ void handle_command_line(
   int pipe,
   Command ** commands
 ) {
-  //printf("handle_command_line | [%s]\n", input);
   int is_background = 0;
   int is_pipe       = 0;
   char * separator  = NULL;
@@ -152,7 +150,6 @@ void handle_command_line(
   } else {
     // no special characters found
     commands[command_count] = make_command(input, background, pipe);
-    //printf("make_command | %d, %p\n", command_count, commands[command_count]);
     command_count++;
   }
 
