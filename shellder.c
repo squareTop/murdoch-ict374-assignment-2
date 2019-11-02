@@ -14,6 +14,24 @@ void test() {
 }
 
 /**
+ * Changes prompt name. Does nothing if argument is an empty string.
+ * We are not checking for and trimming trailing whitespace.
+ * Returns 0 if changed, 1 if not.
+ * Satisfies requirement #3 and marking guide #3.
+ *
+ * @param  {char *} input
+ * @return {int}
+ */
+int prompt(char * input) {
+  if (strlen(input) > 0) {
+    shell_name = strdup(input);
+    return 0;
+  }
+
+  return 1;
+}
+
+/**
  * Ignore interrupt, quit, and stop signals.
  * Satisfies marking guide #13.
  */
@@ -26,6 +44,9 @@ void ignore_signals() {
   sigprocmask(SIG_SETMASK, &signal_set, NULL);
 }
 
+/**
+ * Executes commands found in list.
+ */
 void execute_commands() {
   int index = 0;
   Command * command;
@@ -46,8 +67,6 @@ void execute_commands() {
  */
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
-  //char shell_name[BUF_SIZE] = "%";
-  char * shell_name = "%";
 
   // ignore keyboard signals
   //ignore_signals();
@@ -60,10 +79,7 @@ int main(int argc, char * argv[]) {
     // remove newline character
     input[strlen(input) - 1] = '\0';
 
-    //shell_name = strdup(input);
-
     handle_command_line(input, 0, 0, commands);
-
     execute_commands();
   }
 

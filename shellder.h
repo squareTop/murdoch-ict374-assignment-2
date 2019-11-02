@@ -10,14 +10,15 @@
  * Global variables
  */
 Command * commands[MAX_COMMANDS];
+char    * shell_name = "%";
 
 /**
  * Methods
  */
 void builtin_cd();
 void builtin_exit();
-void builtin_prompt();
 void builtin_pwd();
 void execute_commands();
 void ignore_signals();
+int prompt(char * input);
 void test();
