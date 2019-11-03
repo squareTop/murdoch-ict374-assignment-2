@@ -28,5 +28,6 @@ void   handle_command_line(
   char * input,
   int background,
   int pipe,
+  int iteration,
   Command ** commands
 );

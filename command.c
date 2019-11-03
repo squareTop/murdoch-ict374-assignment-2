@@ -124,6 +124,7 @@ void handle_command_line(
   char * input,
   int background,
   int pipe,
+  int iteration,
   Command ** commands
 ) {
   int is_background = 0;
@@ -131,6 +132,11 @@ void handle_command_line(
   char * separator  = NULL;
   char * token      = NULL;
   static int command_count;
+
+  // reset command count if we're running this method as a fresh run
+  if (iteration == 0) {
+    command_count = 0;
+  }
 
   if ((separator = get_separator(input)) != NULL) {
     // separators found
@@ -146,7 +152,7 @@ void handle_command_line(
     }
 
     // process the input again to see if anymore separators are present
-    handle_command_line(input, is_background, is_pipe, commands);
+    handle_command_line(input, is_background, is_pipe, 1, commands);
   } else {
     // no special characters found
     commands[command_count] = make_command(input, background, pipe);
@@ -155,6 +161,6 @@ void handle_command_line(
 
   // run method again if input is still available
   if (token != NULL) {
-    handle_command_line(token, background, pipe, commands);
+    handle_command_line(token, background, pipe, 1, commands);
   }
 }
