@@ -1,19 +1,6 @@
 #include "shellder.h"
 
 /**
- * Run tests.
- */
-void test() {
-  //char sample[] = "date -foo -bar & who & ps -ef | grep foo; ls -l -t -a; who & cat < junk; cat some.file > /tmp/foo & whoami";
-  //char sample[] = "date & ps -ef | grep foo; ls -l -t; cat foo.txt > /tmp/foo; cat < junk";
-  //char sample[] = "cat | cat | cat | cat > junk & cat | cat | cat | cat | grep line";
-  //char sample[] = "ps | sort & sleep 10 & date; cat foo.txt > /tmp/foo";
-  char sample[] = "ls -l > junk ; cat < junk ; /bin/ls -lt /dev/tty* | grep tty | sort | head > junk2 & sleep 10 ; cat < junk2";
-  printf("************************************************\n");
-  handle_command_line(sample, 0, 0, 0, commands);
-}
-
-/**
  * Test that the program can correct process commands with multiple arguments,
  * like "% ls -l -a -h"
  * Should satisfy:
