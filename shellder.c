@@ -14,6 +14,32 @@ void test() {
 }
 
 /**
+ * Test that the program can correct process commands with multiple arguments,
+ * like "% ls -l -a -h"
+ * Should satisfy:
+ * - Issue #11
+ * - Requirement #(N/A)
+ * - Marking guide #4
+ */
+void test_multiple_command_args() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[4] = {
+    "ls -l -a -h -i -e -g -m -n -p",
+    "echo foo bar lorem ipsum dolor sit amet",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
  * Test that the program can run commands sequentially. (e.g. % ps; ls)
  * Should satisfy:
  * - Issue #10
@@ -174,6 +200,8 @@ void create_process(Command * command) {
  */
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
+
+  //test_multiple_command_args();
 
   // ignore keyboard signals
   //ignore_signals();
