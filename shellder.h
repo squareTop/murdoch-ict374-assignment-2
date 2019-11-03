@@ -35,7 +35,7 @@ int  set_redirection(Command * command);
  */
 int change_directory();
 int exit_program();
-int sprompt(char * input);
+int prompt(char * input);
 int print_working_directory();
 
 /**
