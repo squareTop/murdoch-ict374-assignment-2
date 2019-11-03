@@ -4,7 +4,7 @@
 
     * Check to see whether executable is provided
     * Check to see whether the program can be built using the makefile and the source code
-    
+
     Marks:
 
     * No makefile, no more than 5 marks.
@@ -34,15 +34,15 @@
     * `% cd ..`
     * `% pwd`
     * `% exit`
-    
+
     Suggestion: 1 mark for each of “prompt”, “pwd” and “exit”. 2 marks for “cd”.
 
 1. **Long command (5 marks)**
 
     Check whether the shell can take a command with many command line arguments:
 
-    * `% ls –l  -t   a b c`  
-    * `% show a  bb  ccc  dddd 1  22  333  4444  555555`  
+    * `% ls –l  -t   a b c`
+    * `% show a  bb  ccc  dddd 1  22  333  4444  555555`
     * `% show  a b c d e f g h I j k l m n o p q r s t u v w x y z 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 20 abc123xyz`
 
 1. **Wildcards (5 marks)**
@@ -108,7 +108,7 @@
 
     * `% cat /tmp/foo |  sort  |  sort –r  |  grep  line `
     * `% cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat `
-        
+
         In the above command line, you should be able to type a line from the keyboard and see the echoed line as well as the output line. The two lines should be the same. You should be able to repeatedly type lines. End the "file" by typing Ctrl-D.
 
     * `% cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat > junk`
@@ -120,7 +120,7 @@
         You should see each echoed line and those lines containing word "line".
 
 1. **Combinations (10 marks)**
-    
+
     Check:
 
     * `%  ls -l   > junk  ;  cat < junk ;  /bin/ls  -lt  /dev/tty*  |  grep tty  |  sort  |  head  > junk2  &  sleep 10  ;  cat  < junk2`
@@ -132,17 +132,17 @@
 
 1. **Claim of zombies (5 marks)**
 
-    You should check whether the shell has claimed zombie processes. One way to check this is: while running the shell in one terminal, open up another terminal. In the shell prompt, type the command "sleep 1 &" several times. In the other terminal, use the command "ps –elfH | grep your-userid" to check whether there are zombies (defunct children of the shell). 
+    You should check whether the shell has claimed zombie processes. One way to check this is: while running the shell in one terminal, open up another terminal. In the shell prompt, type the command `sleep 1 &` several times. In the other terminal, use the command `ps –elfh | grep your-userid` to check whether there are zombies (defunct children of the shell).
 
 1. **Handling of slow system calls (5 marks)**
 
-    In the shell command loop where it reads a command line, a standard function such as fgets will be used. Ultimately these standard input functions would have to be implemented using the read system call. The blocking read can return prematurely when a signal is received (rather than when it receives an input). If such kind of event is not handled, the shell may behave erratically, such as suddenly displaying a shell prompt. It is a bit hard to check this feature, but I suggest that you can use one of the two ways:
-    
+    In the shell command loop where it reads a command line, a standard function such as `fgets` will be used. Ultimately these standard input functions would have to be implemented using the read system call. The blocking read can return prematurely when a signal is received (rather than when it receives an input). If such kind of event is not handled, the shell may behave erratically, such as suddenly displaying a shell prompt. It is a bit hard to check this feature, but I suggest that you can use one of the two ways:
+
     1. checking the code to see whether it is handled. I have released a note in the Project Page which documented this problem and its solution (See Notes on Project Implementation under Project Page)
-    1. Send a signal such as SIGCHLD to the shell to see whether it would change its behaviour. 
+    1. Send a signal such as `SIGCHLD` to the shell to see whether it would change its behaviour.
 
 1. **Compliance to Documentation Requirements and Submission Guidelines (10 marks)**
-    
+
     1. The completed Project Declaration Form
     1. List of files
     1. Project title and description of the project
