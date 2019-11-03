@@ -36,6 +36,7 @@ int print_working_directory();
 
 /**
  * Methods: tests
+ * These tests help verify that we satisfy project requirements.
  */
 void test();
 void test_multiple_command_args();
