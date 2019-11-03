@@ -18,6 +18,7 @@ typedef struct CommandStruct {
   int    argc;
   int    background;
   int    pipe;
+  int    redirection;
 } Command;
 
 Command * make_command(char * input, int background, int pipe);

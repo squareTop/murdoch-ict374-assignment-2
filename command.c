@@ -13,6 +13,7 @@ void print_command(Command * command) {
   }
   printf("| %-24s | %-16d |\n", "Runs in background?", command->background);
   printf("| %-24s | %-16d |\n", "Pipes to command",    command->pipe);
+  printf("| %-24s | %-16d |\n", "Redirection",         command->redirection);
   printf("| %-24s | %-16s |\n", "Redirect input",      command->stdin);
   printf("| %-24s | %-16s |\n", "Redirect output",     command->stdout);
   printf("-----------------------------------------------\n");
@@ -89,7 +90,8 @@ Command * make_command(char * input, int background, int pipe) {
     // get output destination
     token = strtok(NULL, " ");
 
-    // save the redirection
+    // save the redirection; 1 for standard input (fd[1])
+    command->redirection = 1;
     command->stdout = strdup(token);
   } else if (stdin_result != NULL) {
     // input redirection found
@@ -98,7 +100,8 @@ Command * make_command(char * input, int background, int pipe) {
     // get input destination
     token = strtok(NULL, " ");
 
-    // save the redirection
+    // save the redirection; 0 for standard input (fd[0])
+    command->redirection = 0;
     command->stdin = strdup(token);
   }
 
