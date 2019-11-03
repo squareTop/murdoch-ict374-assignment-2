@@ -1,7 +1,10 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include "command.h"
@@ -25,6 +28,7 @@ void create_process(Command * command);
 void empty_commands();
 void execute_commands();
 void ignore_signals();
+int  set_redirection(Command * command);
 
 /**
  * Methods: built-in commands

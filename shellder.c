@@ -70,6 +70,43 @@ int prompt(char * input) {
 }
 
 /**
+ * Opens a file for standard input or output.
+ * Returns 0 if successfully done, 1 if not.
+ * @param  {Command *} command
+ * @return {int}
+ */
+int set_redirection(Command * command) {
+  char * file_name = NULL;
+  int descriptor   = command->redirection;
+  int file         = 0;
+
+  // 0 = standard input (e.g. keyboard), 1 = standard output (e.g. display)
+  if (descriptor == 0) {
+    file_name = command->stdin;
+    file      = open(file_name, O_RDONLY);
+  } else if (descriptor == 1) {
+    file_name = command->stdout;
+    file      = open(file_name, O_WRONLY | O_CREAT, 0766);
+  } else {
+    return 1;
+  }
+
+  if (file < 0) {
+    perror("Error opening file");
+    exit(1);
+  } else {
+    dup2(file, descriptor);
+    close(file);
+  }
+
+  if (file_name != NULL) {
+    free(file_name);
+  }
+
+  return 0;
+}
+
+/**
  * Ignore interrupt, quit, and stop signals.
  * Satisfies marking guide #13.
  */
@@ -157,11 +194,15 @@ void create_process(Command * command) {
   pid = fork();
 
   if (pid == 0) {
-    execvp(command->name, command->argv);
+    if (command->stdin != NULL || command->stdout != NULL) {
+      set_redirection(command);
+    }
 
-    // print error if invalid command
-    fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
-    exit(1);
+    // print error if we're unable to execute the command
+    if (execvp(command->name, command->argv) < 0) {
+      fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
+      exit(1);
+    }
   } else if (pid < 0) {
     perror("Error forking");
     exit(1);
