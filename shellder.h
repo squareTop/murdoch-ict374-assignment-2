@@ -38,3 +38,4 @@ int print_working_directory();
  * Methods: tests
  */
 void test();
+void test_sequential();

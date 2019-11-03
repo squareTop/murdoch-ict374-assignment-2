@@ -14,6 +14,32 @@ void test() {
 }
 
 /**
+ * Test that the program can run commands sequentially. (e.g. % ps; ls)
+ * Should satisfy:
+ * - Issue #10
+ * - Requirement #10
+ * - Marking guide #6
+ */
+void test_sequential() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[4] = {
+    "sleep 3 ; echo hello",
+    "sleep 3 ; ls -l",
+    "sleep 3 ; echo hello1 ; sleep 3 ; echo hello2",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
  * Changes prompt name. Does nothing if argument is an empty string.
  * Returns 0 if changed, 1 if not.
  * Satisfies requirement #3 and marking guide #3.
