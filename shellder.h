@@ -29,6 +29,7 @@ void empty_commands();
 void execute_commands();
 void ignore_signals();
 int  set_redirection(Command * command);
+void create_piped_processes(Command ** piped_commands, int count);
 
 /**
  * Methods: built-in commands

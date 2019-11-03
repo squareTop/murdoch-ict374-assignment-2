@@ -191,7 +191,9 @@ void empty_commands() {
  */
 void execute_commands() {
   int index = 0;
+  int pipe_count = 0;
   Command * command;
+  Command * piped_commands[MAX_COMMANDS];
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
@@ -203,11 +205,92 @@ void execute_commands() {
     } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
       prompt(command->argv[1]);
     } else {
-      create_process(command);
+      if (command->pipe > 0) {
+        //create_process(command);
+        printf("execute_commands | %s\n", command->name);
+        piped_commands[pipe_count] = command;
+        pipe_count++;
+      } else {
+        //printf("execute_commands | %d\n", pipe_count);
+        if (pipe_count > 0) {
+          piped_commands[pipe_count++] = command;
+          create_piped_processes(piped_commands, pipe_count);
+          for (int i = 0; i < pipe_count; i++) {
+            piped_commands[i] = NULL;
+          }
+          pipe_count = 0;
+        } else {
+          create_process(command);
+        }
+      }
     }
   }
 
   free(command);
+}
+
+void create_piped_processes(Command ** piped_commands, int count) {
+  int index;
+  int status;
+  int num_of_pipes = count - 1;
+  int pipes[num_of_pipes][2];
+  Command * command = NULL;
+
+  // create pipes
+  for (index = 0; index < num_of_pipes; index++) {
+    if (pipe(pipes[index]) < 0) {
+      perror("Error in pipe call");
+      exit(1);
+    }
+  }
+
+  // create child processes and tie their stdin and stdout to the appropriate ends of the pipes
+  for (index = 0; index < count; index++) {
+    command = piped_commands[index];
+
+    if (fork() == 0) {
+      //printf("** child | %s | %d\n", command->name, getpid());
+      if (index == 0) {
+        dup2(pipes[index][1], 1);
+      } else if (index == num_of_pipes) {
+        dup2(pipes[index - 1][0], 0);
+      } else {
+        dup2(pipes[index - 1][0], 0);
+        dup2(pipes[index][1], 1);
+      }
+
+      // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
+      for (int i = 0; i < num_of_pipes; i++) {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+      }
+
+      if (execvp(command->name, command->argv) < 0) {
+        fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
+        exit(1);
+      }
+    } else {
+      //printf("** process | %s | %d\n", command->name, getpid());
+    }
+  }
+
+  // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
+  for (int i = 0; i < num_of_pipes; i++) {
+    close(pipes[i][0]);
+    close(pipes[i][1]);
+  }
+
+  // wait for processes to terminate if they're not supposed to run in the background
+  for (index = 0; index < count; index++) {
+    //pid_t wpid = wait(&status);
+    wait(&status);
+
+    if (WIFEXITED(status)) {
+      //printf("** Child process '%d' exited with status: %d.\n", wpid, WEXITSTATUS(status));
+    } else if (WIFSIGNALED(status)) {
+      //printf("** Child process '%d' terminated by signal: %d.\n", wpid, WTERMSIG(status));
+    }
+  }
 }
 
 /**
@@ -215,7 +298,7 @@ void execute_commands() {
  * @param {Command *}
  */
 void create_process(Command * command) {
-  //printf("create_process | %d\n", getpid());
+  //printf("create_process | %s | %d\n", command->name, getpid());
   pid_t pid;
   int status;
 
