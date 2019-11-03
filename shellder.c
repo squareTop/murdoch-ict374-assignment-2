@@ -1,7 +1,7 @@
 #include "shellder.h"
 
 /**
- * Test that the program can correct process commands with multiple arguments,
+ * Test that the program can correctly process commands with multiple arguments,
  * like "% ls -l -a -h"
  * Should satisfy:
  * - Issue #11
@@ -14,6 +14,34 @@ void test_multiple_command_args() {
   char * test_commands[4] = {
     "ls -l -a -h -i -e -g -m -n -p",
     "echo foo bar lorem ipsum dolor sit amet",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
+ * Test that the program can perform redirection (input or output).
+ * Example: "cat foo > bar", "cat < foo".
+ * Should satisfy:
+ * - Issue #6
+ * - Requirement #7
+ * - Marking guide #8, 9
+ */
+void test_redirection() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[5] = {
+    "cat foo > bar",
+    "cat foo2 > bar",
+    "cat < bar",
+    "grep 99 < bar",
     NULL
   };
 
@@ -229,7 +257,7 @@ void create_process(Command * command) {
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
 
-  //test_multiple_command_args();
+  //test_redirection();
 
   // ignore keyboard signals
   //ignore_signals();
