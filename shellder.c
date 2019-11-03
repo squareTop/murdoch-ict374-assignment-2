@@ -49,26 +49,35 @@ void ignore_signals() {
  * command line processing.
  */
 void empty_commands() {
-  int index     = 0;
-  int arg_index = 0;
-  Command * command;
+  int index = 0;
 
-  while ((command = commands[index++]) != NULL) {
-    while (command->argv[++arg_index] != NULL) {
-      command->argv[arg_index] = NULL;
+  while (commands[index] != NULL) {
+    printf("** freeing: %s, %p\n", commands[index]->name, commands[index]);
+
+    // nullify arguments
+    while (commands[index]->argv[arg_index] != NULL) {
+      commands[index]->argv[arg_index] = NULL;
+      arg_index++;
     }
 
-    command->name = NULL;
-    command->stdin = NULL;
-    command->stdout = NULL;
-    command->argc = 0;
-    command->background = 0;
-    command->pipe = 0;
+    if (commands[index]->name != NULL) {
+      free(commands[index]->name);
+    }
 
+    if (commands[index]->stdin != NULL) {
+      free(commands[index]->stdin);
+    }
+
+    if (commands[index]->stdout != NULL) {
+      free(commands[index]->stdout);
+    }
+
+    // free and nullify Command struct
     free(commands[index]);
-  }
+    commands[index] = NULL;
 
-  free(command);
+    index++;
+  }
 }
 
 /**
@@ -80,7 +89,6 @@ void execute_commands() {
 
   while ((command = commands[index++]) != NULL) {
     printf("execute_commands | %s, %p\n", command->name, command);
-    //index++;
   }
 
   free(command);
