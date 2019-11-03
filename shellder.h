@@ -1,10 +1,16 @@
+#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include "command.h"
 
 #define BUF_SIZE 256
+#define BUILTIN_CHANGE_DIR "cd"
+#define BUILTIN_EXIT      "exit"
+#define BUILTIN_PRINT_DIR "pwd"
+#define BUILTIN_PROMPT    "prompt"
 
 /**
  * Global variables
@@ -15,11 +21,20 @@ char    * shell_name = "%";
 /**
  * Methods
  */
-void builtin_cd();
-void builtin_exit();
-void builtin_pwd();
+void create_process(Command * command);
 void empty_commands();
 void execute_commands();
 void ignore_signals();
-int prompt(char * input);
+
+/**
+ * Methods: built-in commands
+ */
+int change_directory();
+int exit_program();
+int sprompt(char * input);
+int print_working_directory();
+
+/**
+ * Methods: tests
+ */
 void test();

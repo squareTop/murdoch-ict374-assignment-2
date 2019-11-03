@@ -15,7 +15,6 @@ void test() {
 
 /**
  * Changes prompt name. Does nothing if argument is an empty string.
- * We are not checking for and trimming trailing whitespace.
  * Returns 0 if changed, 1 if not.
  * Satisfies requirement #3 and marking guide #3.
  *
@@ -23,7 +22,7 @@ void test() {
  * @return {int}
  */
 int prompt(char * input) {
-  if (strlen(input) > 0) {
+  if (input != NULL && strlen(input) > 0) {
     shell_name = strdup(input);
     return 0;
   }
@@ -53,7 +52,7 @@ void empty_commands() {
   int argv_index = 0;
 
   while (commands[index] != NULL) {
-    printf("** freeing: %s, %p\n", commands[index]->name, commands[index]);
+    //printf("** freeing: %s, %p\n", commands[index]->name, commands[index]);
 
     // nullify arguments
     while (commands[index]->argv[argv_index] != NULL) {
@@ -83,16 +82,62 @@ void empty_commands() {
 
 /**
  * Executes commands found in list.
+ * If any of the built-in commands are found, we'll simply run those methods.
+ * Otherwise, we'll fork child processes to run the other shell commands.
  */
 void execute_commands() {
   int index = 0;
   Command * command;
 
   while ((command = commands[index++]) != NULL) {
-    printf("execute_commands | %s, %p\n", command->name, command);
+    if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
+      //
+    } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
+      //
+    } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
+      //
+    } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
+      prompt(command->argv[1]);
+    } else {
+      create_process(command);
+    }
   }
 
   free(command);
+}
+
+/**
+ * Creates child process that runs command.
+ * @param {Command *}
+ */
+void create_process(Command * command) {
+  //printf("create_process | %d\n", getpid());
+  pid_t pid;
+  int status;
+
+  pid = fork();
+
+  if (pid == 0) {
+    execvp(command->name, command->argv);
+
+    // print error if invalid command
+    fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
+    exit(1);
+  } else if (pid < 0) {
+    perror("Error forking");
+    exit(1);
+  }
+
+  wait(&status);
+
+  if (WIFEXITED(status)) {
+    //printf("** Child process '%s' exited with status: %d.\n", command->name, WEXITSTATUS(status));
+  } else if (WIFSIGNALED(status)) {
+    //printf("** Child process '%s' terminated by signal: %d.\n", command->name, WTERMSIG(status));
+    perror("Process signal");
+  }
+
+  //printf("create_process | parent continues | %d\n", getpid());
 }
 
 /**
@@ -115,9 +160,12 @@ int main(int argc, char * argv[]) {
     // remove newline character
     input[strlen(input) - 1] = '\0';
 
-    handle_command_line(input, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    // only proceed if input is not empty; allows for empty returns (hitting enter with no input)
+    if (strlen(input) > 0) {
+      handle_command_line(input, 0, 0, 0, commands);
+      execute_commands();
+      empty_commands();
+    }
   }
 
   exit(0);
