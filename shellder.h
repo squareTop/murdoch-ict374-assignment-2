@@ -18,6 +18,7 @@ char    * shell_name = "%";
 void builtin_cd();
 void builtin_exit();
 void builtin_pwd();
+void empty_commands();
 void execute_commands();
 void ignore_signals();
 int prompt(char * input);

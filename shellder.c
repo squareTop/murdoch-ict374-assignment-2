@@ -10,7 +10,7 @@ void test() {
   //char sample[] = "ps | sort & sleep 10 & date; cat foo.txt > /tmp/foo";
   char sample[] = "ls -l > junk ; cat < junk ; /bin/ls -lt /dev/tty* | grep tty | sort | head > junk2 & sleep 10 ; cat < junk2";
   printf("************************************************\n");
-  handle_command_line(sample, 0, 0, commands);
+  handle_command_line(sample, 0, 0, 0, commands);
 }
 
 /**
@@ -45,15 +45,42 @@ void ignore_signals() {
 }
 
 /**
+ * Empties the command list so that it may be used for the next round of
+ * command line processing.
+ */
+void empty_commands() {
+  int index     = 0;
+  int arg_index = 0;
+  Command * command;
+
+  while ((command = commands[index++]) != NULL) {
+    while (command->argv[++arg_index] != NULL) {
+      command->argv[arg_index] = NULL;
+    }
+
+    command->name = NULL;
+    command->stdin = NULL;
+    command->stdout = NULL;
+    command->argc = 0;
+    command->background = 0;
+    command->pipe = 0;
+
+    free(commands[index]);
+  }
+
+  free(command);
+}
+
+/**
  * Executes commands found in list.
  */
 void execute_commands() {
   int index = 0;
   Command * command;
 
-  while ((command = commands[index]) != NULL) {
+  while ((command = commands[index++]) != NULL) {
     printf("execute_commands | %s, %p\n", command->name, command);
-    index++;
+    //index++;
   }
 
   free(command);
@@ -79,8 +106,9 @@ int main(int argc, char * argv[]) {
     // remove newline character
     input[strlen(input) - 1] = '\0';
 
-    handle_command_line(input, 0, 0, commands);
+    handle_command_line(input, 0, 0, 0, commands);
     execute_commands();
+    empty_commands();
   }
 
   exit(0);
