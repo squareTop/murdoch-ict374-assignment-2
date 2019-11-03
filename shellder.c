@@ -50,14 +50,15 @@ void ignore_signals() {
  */
 void empty_commands() {
   int index = 0;
+  int argv_index = 0;
 
   while (commands[index] != NULL) {
     printf("** freeing: %s, %p\n", commands[index]->name, commands[index]);
 
     // nullify arguments
-    while (commands[index]->argv[arg_index] != NULL) {
-      commands[index]->argv[arg_index] = NULL;
-      arg_index++;
+    while (commands[index]->argv[argv_index] != NULL) {
+      commands[index]->argv[argv_index] = NULL;
+      argv_index++;
     }
 
     if (commands[index]->name != NULL) {
