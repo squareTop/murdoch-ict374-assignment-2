@@ -176,12 +176,7 @@ void collect_zombies() {
   while (collect) {
     pid = waitpid(-1, &status, WNOHANG);
 
-    /**
-     * If we use "<= 0" as suggested, "sleep 1 & sleep 3" won't run correctly.
-     * "sleep 1" will show the prompt prematurely despite the process having to
-     * wait for "sleep 3" to finish.
-     */
-    if (pid < 0) {
+    if (pid <= 0) {
       collect = 0;
     }
   }
