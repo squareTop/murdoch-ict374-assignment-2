@@ -405,16 +405,16 @@ void create_process(Command * command) {
     exit(1);
   }
 
-  wait(&status);
-
-  if (WIFEXITED(status)) {
-    //printf("** Child process '%s' exited with status: %d.\n", command->name, WEXITSTATUS(status));
-  } else if (WIFSIGNALED(status)) {
-    //printf("** Child process '%s' terminated by signal: %d.\n", command->name, WTERMSIG(status));
-    perror("Process signal");
+  /**
+   * Parent only waits if command is meant to run in the background.
+   * Should satisfy:
+   * - Issue #8
+   * - Requirement #9
+   * - Marking guide #7
+   */
+  if (command->background == 0) {
+    wait(&status);
   }
-
-  //printf("create_process | parent continues | %d\n", getpid());
 }
 
 /**
