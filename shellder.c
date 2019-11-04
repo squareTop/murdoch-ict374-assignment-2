@@ -229,60 +229,72 @@ void execute_commands() {
   free(command);
 }
 
+/**
+ * Creates child processes and pipes between them.
+ * @param {Command **} piped_commands
+ * @param {int}        count
+ */
 void create_piped_processes(Command ** piped_commands, int count) {
-  int index;
+  int i;
   int status;
   int num_of_pipes = count - 1;
   int pipes[num_of_pipes][2];
   Command * command = NULL;
 
   // create pipes
-  for (index = 0; index < num_of_pipes; index++) {
-    if (pipe(pipes[index]) < 0) {
+  for (i = 0; i < num_of_pipes; i++) {
+    if (pipe(pipes[i]) < 0) {
       perror("Error in pipe call");
       exit(1);
     }
   }
 
   // create child processes and tie their stdin and stdout to the appropriate ends of the pipes
-  for (index = 0; index < count; index++) {
-    command = piped_commands[index];
+  for (i = 0; i < count; i++) {
+    command = piped_commands[i];
 
     if (fork() == 0) {
-      //printf("** child | %s | %d\n", command->name, getpid());
-      if (index == 0) {
-        dup2(pipes[index][1], 1);
-      } else if (index == num_of_pipes) {
-        dup2(pipes[index - 1][0], 0);
+      /**
+       * Connect appropriate descriptors to relevant pipe ends.
+       *
+       * Visualisation:
+       * [Process 1]───────────────┐ (writes into pipe[0][1]])
+       * |------------((R) Pipe 1 (W))
+       * [Process 2]────┴──────────┐ (writes into pipe[1][1], reads from pipe[0][0])
+       * |------------((R) Pipe 2 (W))
+       * [Process 3]────┘            (reads from pipe[1][0])
+       */
+      if (i == 0) {
+        dup2(pipes[i][1], 1);     // write into [1] of first pipe
+      } else if (i == num_of_pipes) {
+        dup2(pipes[i - 1][0], 0); // read from [0] of previous pipe
       } else {
-        dup2(pipes[index - 1][0], 0);
-        dup2(pipes[index][1], 1);
+        dup2(pipes[i - 1][0], 0); // read from [0] of previous pipe
+        dup2(pipes[i][1], 1);     // write into [1] of next pipe
       }
 
       // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
-      for (int i = 0; i < num_of_pipes; i++) {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
+      for (int j = 0; j < num_of_pipes; j++) {
+        close(pipes[j][0]);
+        close(pipes[j][1]);
       }
 
+      // print error if we're unable to execute the command
       if (execvp(command->name, command->argv) < 0) {
         fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
         exit(1);
       }
-    } else {
-      //printf("** process | %s | %d\n", command->name, getpid());
     }
   }
 
   // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
-  for (int i = 0; i < num_of_pipes; i++) {
+  for (i = 0; i < num_of_pipes; i++) {
     close(pipes[i][0]);
     close(pipes[i][1]);
   }
 
   // wait for processes to terminate if they're not supposed to run in the background
-  for (index = 0; index < count; index++) {
-    //pid_t wpid = wait(&status);
+  for (i = 0; i < count; i++) {
     wait(&status);
 
     if (WIFEXITED(status)) {
