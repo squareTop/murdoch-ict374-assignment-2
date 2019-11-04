@@ -235,7 +235,6 @@ void execute_commands() {
     } else {
       if (command->pipe > 0) {
         //create_process(command);
-        printf("execute_commands | %s\n", command->name);
         piped_commands[pipe_count] = command;
         pipe_count++;
       } else {
@@ -379,6 +378,7 @@ void create_process(Command * command) {
  */
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
+  char * input_pointer = NULL;
 
   //test_pipes();
 
@@ -389,6 +389,16 @@ int main(int argc, char * argv[]) {
   while (1) {
     printf("%s ", shell_name);
     fgets(input, BUF_SIZE, stdin);
+
+    /**
+     * Force a re-read if a signal interrupts our fgets.
+     * Satisfies:
+     * - Issue #17
+     * - Marking guide #15
+     */
+    if (input_pointer == NULL && errno == EINTR) {
+      input_pointer = fgets(input, BUF_SIZE, stdin);
+    }
 
     // remove newline character
     input[strlen(input) - 1] = '\0';
