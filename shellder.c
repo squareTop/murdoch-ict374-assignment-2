@@ -163,11 +163,58 @@ int set_redirection(Command * command) {
 }
 
 /**
- * Ignore interrupt, quit, and stop signals.
- * Satisfies marking guide #13.
+ * Recursively collect background processes (zombies).
+ * Should satisfy:
+ * - Issue #16
+ * - Marking guide #14
  */
-void ignore_signals() {
+void collect_zombies() {
+  int collect = 1;
+  int status;
+  pid_t pid;
+
+  while (collect) {
+    pid = waitpid(-1, &status, WNOHANG);
+
+    if (pid <= 0) {
+      collect = 0;
+    }
+  }
+}
+
+/**
+ * Signal handler; we're only handling SIGCHLD.
+ * @param {int} signal_number
+ */
+void handle_signals(int signal_number) {
+  if (signal_number == SIGCHLD) {
+    collect_zombies();
+  }
+}
+
+/**
+ * Ignore interrupt, quit, and stop signals, catch child termination signal.
+ * Should satisfy marking guide #13.
+ */
+void setup_signals() {
+  struct sigaction act;
   sigset_t signal_set;
+
+  act.sa_flags = 0;
+  act.sa_handler = handle_signals;
+
+  // catch SIGCHLD
+  if (sigaction(SIGCHLD, &act, NULL) != 0) {
+    perror("sigaction");
+    exit(1);
+  }
+
+  // if we're debugging, don't ignore the other signals to allow easy exit.
+  if (DEBUG == 1) {
+    return;
+  }
+
+  // add signals we want to ignore
   sigemptyset(&signal_set);
   sigaddset(&signal_set, SIGINT);
   sigaddset(&signal_set, SIGQUIT);
@@ -381,14 +428,12 @@ int main(int argc, char * argv[]) {
   char * input_pointer = NULL;
 
   //test_pipes();
-
-  // ignore keyboard signals
-  //ignore_signals();
+  setup_signals();
 
   // run infinite loop; prompt for input and execute commands
   while (1) {
     printf("%s ", shell_name);
-    fgets(input, BUF_SIZE, stdin);
+    input_pointer = fgets(input, BUF_SIZE, stdin);
 
     /**
      * Force a re-read if a signal interrupts our fgets.

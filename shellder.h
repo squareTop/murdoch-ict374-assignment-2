@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include "command.h"
 
+#define DEBUG 0
 #define BUF_SIZE 256
 #define BUILTIN_CHANGE_DIR "cd"
 #define BUILTIN_EXIT      "exit"
@@ -24,10 +25,12 @@ char    * shell_name = "%";
 /**
  * Methods
  */
+void collect_zombies();
 void create_process(Command * command);
 void empty_commands();
 void execute_commands();
-void ignore_signals();
+void handle_signals();
+void setup_signals();
 int  set_redirection(Command * command);
 void create_piped_processes(Command ** piped_commands, int count);
 
