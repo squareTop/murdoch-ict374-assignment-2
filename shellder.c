@@ -337,11 +337,15 @@ void execute_commands() {
  * @param {int}        count
  */
 void create_piped_processes(Command ** piped_commands, int count) {
+  pid_t pid;
   int i;
   int status;
+  int pids[count];
+
   int num_of_pipes = count - 1;
   int pipes[num_of_pipes][2];
   Command * command = NULL;
+
 
   // create pipes
   for (i = 0; i < num_of_pipes; i++) {
@@ -354,8 +358,9 @@ void create_piped_processes(Command ** piped_commands, int count) {
   // create child processes and tie their stdin and stdout to the appropriate ends of the pipes
   for (i = 0; i < count; i++) {
     command = piped_commands[i];
+    pid = fork();
 
-    if (fork() == 0) {
+    if (pid == 0) {
       //printf("create_process | %s | %d\n", command->name, getpid());
       /**
        * Connect appropriate descriptors to relevant pipe ends.
@@ -388,6 +393,9 @@ void create_piped_processes(Command ** piped_commands, int count) {
         exit(1);
       }
     }
+
+    // save the child process ID
+    pids[i] = pid;
   }
 
   // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
@@ -396,15 +404,16 @@ void create_piped_processes(Command ** piped_commands, int count) {
     close(pipes[i][1]);
   }
 
-  // wait for processes to terminate if they're not supposed to run in the background
+  /*
+   * Wait for each child process created previously.
+   * This approach seems more 'air-tight' than the previous "wait(&status)" one,
+   * which seemed to cause problems with background processes and multiple pipes.
+   * Example: "sleep 10 & ps -ef | grep usr | head | sort"
+   * ... would seem to wait for "sleep 10" to complete even though it's a
+   * background process. Using "waitpid" seems to fix this.
+   */
   for (i = 0; i < count; i++) {
-    wait(&status);
-
-    if (WIFEXITED(status)) {
-      //printf("** Child process '%d' exited with status: %d.\n", wpid, WEXITSTATUS(status));
-    } else if (WIFSIGNALED(status)) {
-      //printf("** Child process '%d' terminated by signal: %d.\n", wpid, WTERMSIG(status));
-    }
+    waitpid(pids[i], &status, 0);
   }
 }
 
