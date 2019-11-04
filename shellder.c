@@ -27,6 +27,34 @@ void test_multiple_command_args() {
 }
 
 /**
+ * Test that the program can execute piped commands.
+ * Example: "ps -ef | grep usr | head".
+ * Should satisfy:
+ * - Issue #8, #13
+ * - Requirement #8
+ * - Marking guide #10, #11
+ */
+void test_pipes() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[5] = {
+    "ps -ef | head",
+    "ps -ef | grep usr | head",
+    "ps -ef | grep usr | head -6 | tail -3",
+    "ps -ef | grep usr | head -4; date",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
  * Test that the program can perform redirection (input or output).
  * Example: "cat foo > bar", "cat < foo".
  * Should satisfy:
@@ -352,7 +380,7 @@ void create_process(Command * command) {
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
 
-  //test_redirection();
+  //test_pipes();
 
   // ignore keyboard signals
   //ignore_signals();
