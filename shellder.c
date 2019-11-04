@@ -30,7 +30,7 @@ void test_multiple_command_args() {
  * Test that the program can execute piped commands.
  * Example: "ps -ef | grep usr | head".
  * Should satisfy:
- * - Issue #8, #13
+ * - Issue #7, #13
  * - Requirement #8
  * - Marking guide #10, #11
  */
