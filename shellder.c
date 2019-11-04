@@ -1,6 +1,34 @@
 #include "shellder.h"
 
 /**
+ * Test that the program can run processes in the background, like "sleep 10 &".
+ * Should satisfy:
+ * - Issue #8
+ * - Requirement #9
+ * - Marking guide #7
+ */
+void test_background() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[6] = {
+    "echo hello & echo world",
+    "sleep 10 & echo hello",
+    "ps & ls",
+    "echo ps-command & ps & echo ls-command & ls -l",
+    "sleep 10 &",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
  * Test that the program can correctly process commands with multiple arguments,
  * like "% ls -l -a -h"
  * Should satisfy:
@@ -328,6 +356,7 @@ void create_piped_processes(Command ** piped_commands, int count) {
     command = piped_commands[i];
 
     if (fork() == 0) {
+      //printf("create_process | %s | %d\n", command->name, getpid());
       /**
        * Connect appropriate descriptors to relevant pipe ends.
        *
@@ -391,6 +420,7 @@ void create_process(Command * command) {
   pid = fork();
 
   if (pid == 0) {
+    //printf("create_process | %s | %d\n", command->name, getpid());
     if (command->stdin != NULL || command->stdout != NULL) {
       set_redirection(command);
     }
@@ -427,13 +457,14 @@ int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
 
-  //test_pipes();
+  //test_background();
   setup_signals();
 
   // run infinite loop; prompt for input and execute commands
   while (1) {
     printf("%s ", shell_name);
     input_pointer = fgets(input, BUF_SIZE, stdin);
+    //printf("input_pointer 1 | %p | %s | %d\n", input_pointer, input_pointer, errno);
 
     /**
      * Force a re-read if a signal interrupts our fgets.
@@ -441,9 +472,10 @@ int main(int argc, char * argv[]) {
      * - Issue #17
      * - Marking guide #15
      */
-    if (input_pointer == NULL && errno == EINTR) {
+    while (input_pointer == NULL && errno == EINTR) {
       input_pointer = fgets(input, BUF_SIZE, stdin);
     }
+    //printf("input_pointer 2 | %p | %s | %d\n", input_pointer, input_pointer, errno);
 
     // remove newline character
     input[strlen(input) - 1] = '\0';
@@ -454,6 +486,7 @@ int main(int argc, char * argv[]) {
       execute_commands();
       empty_commands();
     }
+    //printf("input_pointer 3 | %p | %s | %d\n", input_pointer, input_pointer, errno);
   }
 
   exit(0);
