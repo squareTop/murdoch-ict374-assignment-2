@@ -25,7 +25,7 @@ char    * shell_name = "%";
 /**
  * Methods
  */
-void collect_zombies();
+void collect_children();
 void create_process(Command * command);
 void empty_commands();
 void execute_commands();

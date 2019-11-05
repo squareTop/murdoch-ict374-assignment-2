@@ -220,7 +220,7 @@ int set_redirection(Command * command) {
  * - Issue #16
  * - Marking guide #14
  */
-void collect_zombies() {
+void collect_children() {
   int collect = 1;
   int status;
   pid_t pid;
@@ -240,7 +240,7 @@ void collect_zombies() {
  */
 void handle_signals(int signal_number) {
   if (signal_number == SIGCHLD) {
-    collect_zombies();
+    collect_children();
   }
 }
 
