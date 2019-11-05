@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include "command.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define BUF_SIZE 256
 #define BUILTIN_CHANGE_DIR "cd"
 #define BUILTIN_EXIT      "exit"
