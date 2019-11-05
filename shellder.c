@@ -452,7 +452,7 @@ void create_process(Command * command) {
    * - Marking guide #7
    */
   if (command->background == 0) {
-    wait(&status);
+    waitpid(pid, &status, 0);
   }
 }
 
