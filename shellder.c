@@ -29,6 +29,30 @@ void test_background() {
 }
 
 /**
+ * Test that the program can run a combination of commands.
+ * Should satisfy:
+ * - Issue #14
+ * - Requirement #8, 9, 10
+ * - Marking guide #12
+ */
+void test_combination() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[2] = {
+    "ls -lt | cat > junk ; ps | sort & echo ps-output ; sleep 10 & echo wait-for-10seconds ; cat junk | cat | grep a | sort -r",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, commands);
+    execute_commands();
+    empty_commands();
+    index++;
+  }
+}
+
+/**
  * Test that the program can correctly process commands with multiple arguments,
  * like "% ls -l -a -h"
  * Should satisfy:
@@ -479,7 +503,7 @@ int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
 
-  //test_background();
+  //test_combination();
   setup_signals();
 
   // run infinite loop; prompt for input and execute commands

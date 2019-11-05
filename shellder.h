@@ -47,6 +47,7 @@ int print_working_directory();
  * These tests help verify that we satisfy project requirements.
  */
 void test_background();
+void test_combination();
 void test_multiple_command_args();
 void test_pipes();
 void test_redirection();
