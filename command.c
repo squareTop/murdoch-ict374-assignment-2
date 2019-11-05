@@ -112,7 +112,14 @@ Command * make_command(char * input, int background, int pipe) {
   command->pipe       = pipe;
 
   //print_command(command);
-  return command;
+
+  // only return the struct if there're valid arguments
+  if (command->argc > 0) {
+    return command;
+  } else {
+    free(command);
+    return NULL;
+  }
 }
 
 /**
