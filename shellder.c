@@ -309,17 +309,18 @@ void execute_commands() {
       prompt(command->argv[1]);
     } else {
       if (command->pipe > 0) {
-        //create_process(command);
         piped_commands[pipe_count] = command;
         pipe_count++;
       } else {
-        //printf("execute_commands | %d\n", pipe_count);
         if (pipe_count > 0) {
           piped_commands[pipe_count++] = command;
           create_piped_processes(piped_commands, pipe_count);
+
+          // "empty" the array so that we may use it again later
           for (int i = 0; i < pipe_count; i++) {
             piped_commands[i] = NULL;
           }
+
           pipe_count = 0;
         } else {
           create_process(command);
@@ -338,14 +339,14 @@ void execute_commands() {
  */
 void create_piped_processes(Command ** piped_commands, int count) {
   pid_t pid;
-  int i;
+  int i, j;
   int status;
   int pids[count];
 
+  int is_background = 0;
   int num_of_pipes = count - 1;
   int pipes[num_of_pipes][2];
   Command * command = NULL;
-
 
   // create pipes
   for (i = 0; i < num_of_pipes; i++) {
@@ -359,6 +360,11 @@ void create_piped_processes(Command ** piped_commands, int count) {
   for (i = 0; i < count; i++) {
     command = piped_commands[i];
     pid = fork();
+
+    // if any of the processes have to run in the background, ALL of them must run in the background
+    if (command->background == 1) {
+      is_background = 1;
+    }
 
     if (pid == 0) {
       //printf("create_process | %s | %d\n", command->name, getpid());
@@ -381,8 +387,13 @@ void create_piped_processes(Command ** piped_commands, int count) {
         dup2(pipes[i][1], 1);     // write into [1] of next pipe
       }
 
+      //
+      if (command->stdin != NULL || command->stdout != NULL) {
+        set_redirection(command);
+      }
+
       // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
-      for (int j = 0; j < num_of_pipes; j++) {
+      for (j = 0; j < num_of_pipes; j++) {
         close(pipes[j][0]);
         close(pipes[j][1]);
       }
@@ -412,8 +423,10 @@ void create_piped_processes(Command ** piped_commands, int count) {
    * ... would seem to wait for "sleep 10" to complete even though it's a
    * background process. Using "waitpid" seems to fix this.
    */
-  for (i = 0; i < count; i++) {
-    waitpid(pids[i], &status, 0);
+  if (is_background == 0) {
+    for (i = 0; i < count; i++) {
+      waitpid(pids[i], &status, 0);
+    }
   }
 }
 
