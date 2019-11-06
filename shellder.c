@@ -325,12 +325,23 @@ void execute_commands() {
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
       // Andrew
-	if (!command->argv[1]){
-		chdir(command->argv[1]);
-	else
-		chdir("~");
+	char *path;
+	path = command->argv[1];
+	if (path){
+		path = command->argv[1];
+		// printf("Path: %s.\n", path);
+		int r = chdir(path);
+		if (r < 0)
+			printf("Invalid directory.\n");
+	}
+	else{
+		path = getenv("HOME");
+		chdir(path);
+	}
+
     } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
       //
+	exit(0);
     } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
 	
 	char currentDir[1024];
