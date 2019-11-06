@@ -328,6 +328,12 @@ void execute_commands() {
     } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
       //
     } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
+	
+	char currentDir[1024];
+	getcwd(currentDir, 1024);
+	printf("Current working dir: %s\n", currentDir);
+	
+        
       //
     } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
       prompt(command->argv[1]);
