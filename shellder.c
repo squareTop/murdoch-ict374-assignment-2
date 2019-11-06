@@ -324,7 +324,11 @@ void execute_commands() {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
-      //
+      // Andrew
+	if (!command->argv[1]){
+		chdir(command->argv[1]);
+	else
+		chdir("~");
     } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
       //
     } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
