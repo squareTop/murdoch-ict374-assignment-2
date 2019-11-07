@@ -201,6 +201,22 @@ void change_directory(char * input) {
 }
 
 /**
+ * Prints current working directory.
+ * Should satisfy:
+ * - Issue #2
+ * - Requirement #4
+ * - Marking guide #3
+ *
+ * @return {int}
+ */
+int print_working_directory() {
+  char current_dir[1024];
+  getcwd(current_dir, 1024);
+  printf("%s\n", current_dir);
+  return 0;
+}
+
+/**
  * Opens a file for standard input or output.
  * Returns 0 if successfully done, 1 if not.
  * @param  {Command *} command
@@ -349,16 +365,9 @@ void execute_commands() {
     if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
       change_directory(command->argv[1]);
     } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
-      //
-  exit(0);
+      exit(0);
     } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
-
-  char currentDir[1024];
-  getcwd(currentDir, 1024);
-  printf("Current working dir: %s\n", currentDir);
-
-
-      //
+      print_working_directory();
     } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
       prompt(command->argv[1]);
     } else {

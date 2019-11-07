@@ -38,9 +38,8 @@ void create_piped_processes(Command ** piped_commands, int count);
  * Methods: built-in commands
  */
 void change_directory(char * input);
-int exit_program();
-int prompt(char * input);
-int print_working_directory();
+int  prompt(char * input);
+int  print_working_directory();
 
 /**
  * Methods: tests
