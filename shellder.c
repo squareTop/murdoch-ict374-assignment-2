@@ -178,6 +178,29 @@ int prompt(char * input) {
 }
 
 /**
+ * Changes working directory, which will be set to the user's home directory
+ * if the argument "input" is empty.
+ * Should satisfy:
+ * - Issue #3
+ * - Requirement #5
+ * - Marking guide #3
+ *
+ * @param {char *} input
+ */
+void change_directory(char * input) {
+  if (input != NULL) {
+    int r = chdir(input);
+
+    if (r < 0) {
+      printf("cd: %s: Not a directory.\n", input);
+    }
+  } else {
+    input = getenv("HOME");
+    chdir(input);
+  }
+}
+
+/**
  * Opens a file for standard input or output.
  * Returns 0 if successfully done, 1 if not.
  * @param  {Command *} command
@@ -324,31 +347,17 @@ void execute_commands() {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
-      // Andrew
-	char *path;
-	path = command->argv[1];
-	if (path){
-		path = command->argv[1];
-		// printf("Path: %s.\n", path);
-		int r = chdir(path);
-		if (r < 0)
-			printf("Invalid directory.\n");
-	}
-	else{
-		path = getenv("HOME");
-		chdir(path);
-	}
-
+      change_directory(command->argv[1]);
     } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
       //
-	exit(0);
+  exit(0);
     } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
-	
-	char currentDir[1024];
-	getcwd(currentDir, 1024);
-	printf("Current working dir: %s\n", currentDir);
-	
-        
+
+  char currentDir[1024];
+  getcwd(currentDir, 1024);
+  printf("Current working dir: %s\n", currentDir);
+
+
       //
     } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
       prompt(command->argv[1]);
