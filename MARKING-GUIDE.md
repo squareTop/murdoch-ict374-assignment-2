@@ -41,7 +41,7 @@
 
     Check whether the shell can take a command with many command line arguments:
 
-    * `% ls –l  -t   a b c`
+    * `% ls -l  -t   a b c`
     * `% show a  bb  ccc  dddd 1  22  333  4444  555555`
     * `% show  a b c d e f g h I j k l m n o p q r s t u v w x y z 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 20 abc123xyz`
 
@@ -62,7 +62,7 @@
     Check:
 
     * `%  sleep 10  ;  echo hello`
-    * `%  sleep 10  ;  ls –l`
+    * `%  sleep 10  ;  ls -l`
     * `%  sleep 10  ;  echo hello1  ;   sleep 10 ;  echo hello2`
 
     There should be 10 seconds delay before each command output.
@@ -74,7 +74,7 @@
     * `%  echo hello  &   echo  world`
     * `%  sleep 10  &  echo hello`
     * `%  ps  &   ls`
-    * `%  echo ps-command &  ps   &   echo ls-command  &  ls –l`
+    * `%  echo ps-command &  ps   &   echo ls-command  &  ls -l`
     * `%  sleep 10  &`
 
     The output from all commands should be generated pretty much simultaneously.
@@ -106,7 +106,7 @@
 
     Check:
 
-    * `% cat /tmp/foo |  sort  |  sort –r  |  grep  line `
+    * `% cat /tmp/foo |  sort  |  sort -r  |  grep  line `
     * `% cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat `
 
         In the above command line, you should be able to type a line from the keyboard and see the echoed line as well as the output line. The two lines should be the same. You should be able to repeatedly type lines. End the "file" by typing Ctrl-D.
@@ -124,7 +124,7 @@
     Check:
 
     * `%  ls -l   > junk  ;  cat < junk ;  /bin/ls  -lt  /dev/tty*  |  grep tty  |  sort  |  head  > junk2  &  sleep 10  ;  cat  < junk2`
-    * `% ls –lt | cat > junk ;  ps | sort  &  echo ps-output ; sleep 10 & echo wait-for-10seconds ; cat junk | cat | grep a | sort -r`
+    * `% ls -lt | cat > junk ;  ps | sort  &  echo ps-output ; sleep 10 & echo wait-for-10seconds ; cat junk | cat | grep a | sort -r`
 
 1. **Ignore Ctrl-C, Ctrl-\ and Ctrl-Z (5 marks)**
 
@@ -132,7 +132,7 @@
 
 1. **Claim of zombies (5 marks)**
 
-    You should check whether the shell has claimed zombie processes. One way to check this is: while running the shell in one terminal, open up another terminal. In the shell prompt, type the command `sleep 1 &` several times. In the other terminal, use the command `ps –elfh | grep your-userid` to check whether there are zombies (defunct children of the shell).
+    You should check whether the shell has claimed zombie processes. One way to check this is: while running the shell in one terminal, open up another terminal. In the shell prompt, type the command `sleep 1 &` several times. In the other terminal, use the command `ps -elfh | grep your-userid` to check whether there are zombies (defunct children of the shell).
 
 1. **Handling of slow system calls (5 marks)**
 
