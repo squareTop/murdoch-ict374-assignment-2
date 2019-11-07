@@ -26,13 +26,15 @@ char    * shell_name = "%";
  * Methods
  */
 void collect_children();
+void create_piped_processes(Command ** piped_commands, int count);
 void create_process(Command * command);
 void empty_commands();
 void execute_commands();
 void handle_signals();
 void setup_signals();
-int  set_redirection(Command * command);
-void create_piped_processes(Command ** piped_commands, int count);
+
+int set_redirection(Command * command);
+int toggle_signal_block(int how, int signal_number);
 
 /**
  * Methods: built-in commands
