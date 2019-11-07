@@ -317,6 +317,29 @@ void setup_signals() {
 }
 
 /**
+ * Blocks or unblocks a signal.
+ * Primarily used to block the SIGCHLD signal while the shell is still
+ * waiting for a process to complete, so that the signal doesn't interrupt the
+ * main while loop and prematurely show the prompt.
+ *
+ * @param  {int} how           | Values like SIG_BLOCK, SIG_UNBLOCK, SIG_SETMASK.
+ * @param  {int} signal_number | Values like SIGCHLD, SIGINT, etc.
+ * @return {int}
+ */
+int toggle_signal_block(int how, int signal_number) {
+  sigset_t signal_set;
+  sigemptyset(&signal_set);
+  sigaddset(&signal_set, signal_number);
+
+  if (sigprocmask(how, &signal_set, NULL) < 0) {
+    perror("Error trying to (un)block signal");
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+/**
  * Empties the command list so that it may be used for the next round of
  * command line processing.
  */
@@ -570,9 +593,18 @@ int main(int argc, char * argv[]) {
 
     // only proceed if input is not empty; allows for empty returns (hitting enter with no input)
     if (strlen(input) > 0) {
+      /**
+       * Block SIGCHLD so that the signal doesn't interrupt our loop if our
+       * shell still waiting for a process to complete.
+       */
+      toggle_signal_block(SIG_BLOCK, SIGCHLD);
+
       handle_command_line(input, 0, 0, 0, commands);
       execute_commands();
       empty_commands();
+
+      // unblock SIGCHLD so that we may catch completed background processes
+      toggle_signal_block(SIG_UNBLOCK, SIGCHLD);
     }
     //printf("input_pointer 3 | %p | %s | %d\n", input_pointer, input_pointer, errno);
   }
