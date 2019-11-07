@@ -18,12 +18,13 @@ void test_background() {
     "sleep 10 &",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -42,12 +43,13 @@ void test_combination() {
     "ls -lt | cat > junk ; ps | sort & echo ps-output ; sleep 10 & echo wait-for-10seconds ; cat junk | cat | grep a | sort -r",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -68,12 +70,13 @@ void test_multiple_command_args() {
     "echo foo bar lorem ipsum dolor sit amet",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -96,12 +99,13 @@ void test_pipes() {
     "ps -ef | grep usr | head -4; date",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -124,12 +128,13 @@ void test_redirection() {
     "grep 99 < bar",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -150,12 +155,13 @@ void test_sequential() {
     "sleep 3 ; echo hello1 ; sleep 3 ; echo hello2",
     NULL
   };
+  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, commands);
-    execute_commands();
-    empty_commands();
+    handle_command_line(command, 0, 0, 0, command_list);
+    execute_commands(command_list);
+    empty_commands(command_list);
     index++;
   }
 }
@@ -288,9 +294,12 @@ void handle_signals(int signal_number) {
 
 /**
  * Ignore interrupt, quit, and stop signals, catch child termination signal.
+ * Returns 0 if successful with setup.
  * Should satisfy marking guide #13.
+ *
+ * @return {int}
  */
-void setup_signals() {
+int setup_signals() {
   struct sigaction act;
   sigset_t signal_set;
 
@@ -305,7 +314,7 @@ void setup_signals() {
 
   // if we're debugging, don't ignore the other signals to allow easy exit.
   if (DEBUG == 1) {
-    return;
+    return 0;
   }
 
   // add signals we want to ignore
@@ -313,7 +322,13 @@ void setup_signals() {
   sigaddset(&signal_set, SIGINT);
   sigaddset(&signal_set, SIGQUIT);
   sigaddset(&signal_set, SIGTSTP);
-  sigprocmask(SIG_SETMASK, &signal_set, NULL);
+
+  if (sigprocmask(SIG_SETMASK, &signal_set, NULL) < 0) {
+    perror("Error with SEG_SETMASK");
+    return -1;
+  }
+
+  return 0;
 }
 
 /**
@@ -343,7 +358,7 @@ int toggle_signal_block(int how, int signal_number) {
  * Empties the command list so that it may be used for the next round of
  * command line processing.
  */
-void empty_commands() {
+void empty_commands(Command ** commands) {
   int index = 0;
   int argv_index = 0;
 
@@ -381,7 +396,7 @@ void empty_commands() {
  * If any of the built-in commands are found, we'll simply run those methods.
  * Otherwise, we'll fork child processes to run the other shell commands.
  */
-void execute_commands() {
+void execute_commands(Command ** commands) {
   int index = 0;
   int pipe_count = 0;
   Command * command;
@@ -567,15 +582,15 @@ void create_process(Command * command) {
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
+  Command * command_list[MAX_COMMANDS];
 
-  //test_combination();
+  //test_sequential();
   setup_signals();
 
   // run infinite loop; prompt for input and execute commands
   while (1) {
     printf("%s ", shell_name);
     input_pointer = fgets(input, BUF_SIZE, stdin);
-    //printf("input_pointer 1 | %p | %s | %d\n", input_pointer, input_pointer, errno);
 
     /**
      * Force a re-read if a signal interrupts our fgets.
@@ -586,7 +601,6 @@ int main(int argc, char * argv[]) {
     while (input_pointer == NULL && errno == EINTR) {
       input_pointer = fgets(input, BUF_SIZE, stdin);
     }
-    //printf("input_pointer 2 | %p | %s | %d\n", input_pointer, input_pointer, errno);
 
     // remove newline character
     input[strlen(input) - 1] = '\0';
@@ -599,14 +613,13 @@ int main(int argc, char * argv[]) {
        */
       toggle_signal_block(SIG_BLOCK, SIGCHLD);
 
-      handle_command_line(input, 0, 0, 0, commands);
-      execute_commands();
-      empty_commands();
+      handle_command_line(input, 0, 0, 0, command_list);
+      execute_commands(command_list);
+      empty_commands(command_list);
 
       // unblock SIGCHLD so that we may catch completed background processes
       toggle_signal_block(SIG_UNBLOCK, SIGCHLD);
     }
-    //printf("input_pointer 3 | %p | %s | %d\n", input_pointer, input_pointer, errno);
   }
 
   exit(0);

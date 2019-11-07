@@ -19,8 +19,7 @@
 /**
  * Global variables
  */
-Command * commands[MAX_COMMANDS];
-char    * shell_name = "%";
+char * shell_name = "%";
 
 /**
  * Methods
@@ -28,12 +27,12 @@ char    * shell_name = "%";
 void collect_children();
 void create_piped_processes(Command ** piped_commands, int count);
 void create_process(Command * command);
-void empty_commands();
-void execute_commands();
+void empty_commands(Command ** commands);
+void execute_commands(Command ** commands);
 void handle_signals();
-void setup_signals();
 
 int set_redirection(Command * command);
+int setup_signals();
 int toggle_signal_block(int how, int signal_number);
 
 /**
