@@ -163,7 +163,10 @@ void test_sequential() {
 /**
  * Changes prompt name. Does nothing if argument is an empty string.
  * Returns 0 if changed, 1 if not.
- * Satisfies requirement #3 and marking guide #3.
+ * Should satisfy:
+ * - Issue #1
+ * - Requirement #3
+ * - Marking guide #3
  *
  * @param  {char *} input
  * @return {int}

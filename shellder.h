@@ -12,9 +12,9 @@
 #define DEBUG 1
 #define BUF_SIZE 256
 #define BUILTIN_CHANGE_DIR "cd"
-#define BUILTIN_EXIT      "exit"
-#define BUILTIN_PRINT_DIR "pwd"
-#define BUILTIN_PROMPT    "prompt"
+#define BUILTIN_EXIT       "exit"
+#define BUILTIN_PRINT_DIR  "pwd"
+#define BUILTIN_PROMPT     "prompt"
 
 /**
  * Global variables
@@ -38,8 +38,8 @@ void create_piped_processes(Command ** piped_commands, int count);
  * Methods: built-in commands
  */
 void change_directory(char * input);
-int  prompt(char * input);
 int  print_working_directory();
+int  prompt(char * input);
 
 /**
  * Methods: tests
