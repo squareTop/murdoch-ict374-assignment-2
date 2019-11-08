@@ -6,6 +6,7 @@
  */
 void print_command(Command * command) {
   printf("-----------------------------------------------\n");
+  printf("| %-24s | %-16s |\n", "Full", command->full);
   printf("| %-24s | %-16s |\n", "Name", command->name);
   printf("| %-24s | %-16d |\n", "argc", command->argc);
   for (int i = 0; i < command->argc; i++) {
@@ -82,6 +83,7 @@ Command * make_command(char * input, int background, int pipe) {
   char    * stdin_result  = index(input, * SEPARATOR_INPUT);
   char    * stdout_result = index(input, * SEPARATOR_OUTPUT);
   Command * command       = calloc(1, sizeof(Command));
+  command->full           = strdup(input);
 
   if (stdout_result != NULL) {
     // output redirection found

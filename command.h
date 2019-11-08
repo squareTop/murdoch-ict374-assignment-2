@@ -11,6 +11,7 @@
 #define MAX_ARGUMENTS 1000
 
 typedef struct CommandStruct {
+  char * full;
   char * name;
   char * stdin;
   char * stdout;
