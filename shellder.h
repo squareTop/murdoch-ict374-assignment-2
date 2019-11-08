@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "command.h"
+#include "jobs.h"
 
 #define DEBUG 1
 #define BUF_SIZE 256
@@ -19,7 +20,9 @@
 /**
  * Global variables
  */
+int next_job_index = 0;
 char * shell_name = "%";
+Job  * job_list[MAX_COMMANDS];
 
 /**
  * Methods
