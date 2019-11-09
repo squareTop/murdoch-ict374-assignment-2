@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include "command.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define BUF_SIZE 256
 #define BUILTIN_CHANGE_DIR "cd"
 #define BUILTIN_EXIT       "exit"
@@ -20,6 +20,7 @@
  * Global variables
  */
 char * shell_name = "%";
+Command * command_list[MAX_COMMANDS];
 
 /**
  * Methods

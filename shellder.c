@@ -18,7 +18,6 @@ void test_background() {
     "sleep 10 &",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -43,7 +42,6 @@ void test_combination() {
     "ls -lt | cat > junk ; ps | sort & echo ps-output ; sleep 10 & echo wait-for-10seconds ; cat junk | cat | grep a | sort -r",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -70,7 +68,6 @@ void test_multiple_command_args() {
     "echo foo bar lorem ipsum dolor sit amet",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -99,7 +96,6 @@ void test_pipes() {
     "ps -ef | grep usr | head -4; date",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -128,7 +124,6 @@ void test_redirection() {
     "grep 99 < bar",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -155,7 +150,6 @@ void test_sequential() {
     "sleep 3 ; echo hello1 ; sleep 3 ; echo hello2",
     NULL
   };
-  Command * command_list[MAX_COMMANDS];
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
@@ -582,7 +576,6 @@ void create_process(Command * command) {
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
-  Command * command_list[MAX_COMMANDS];
 
   //test_sequential();
   setup_signals();
