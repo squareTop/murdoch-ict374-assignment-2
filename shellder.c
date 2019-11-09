@@ -192,11 +192,14 @@ int prompt(char * input) {
  */
 void change_directory(char * input) {
   if (input != NULL) {
-    int r = chdir(input);
+    wordexp_t word_expansion;
+    wordexp(input, &word_expansion, 0);
 
-    if (r < 0) {
-      printf("cd: %s: Not a directory.\n", input);
+    if (chdir(word_expansion.we_wordv[0]) < 0) {
+      printf("cd: %s: Not a directory.\n", word_expansion.we_wordv[0]);
     }
+
+    wordfree(&word_expansion);
   } else {
     input = getenv("HOME");
     chdir(input);

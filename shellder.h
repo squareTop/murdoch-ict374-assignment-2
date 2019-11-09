@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <wordexp.h>
 #include "command.h"
 
 #define DEBUG 0
