@@ -31,14 +31,14 @@ int get_arguments(char * input, Command * command) {
   int argument_count = 0;
 
   // split input by whitespace to derive arguments
-  token = strtok(input, " ");
+  token = strtok(input, white_space);
 
   while (token != NULL) {
     // duplicate string and add to arguments array
     command->argv[argument_count] = strdup(token);
 
     // get the next argument
-    token = strtok(NULL, " ");
+    token = strtok(NULL, white_space);
 
     // increment count
     argument_count++;
