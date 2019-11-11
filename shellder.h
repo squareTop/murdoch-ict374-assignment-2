@@ -30,8 +30,9 @@ void collect_children();
 void create_piped_processes(Command ** piped_commands, int count);
 void create_process(Command * command);
 void empty_commands(Command ** commands);
-void execute_commands(Command ** commands);
+void execute_command(Command * command);
 void handle_signals();
+void run_commands(Command ** commands);
 
 int set_redirection(Command * command);
 int setup_signals();

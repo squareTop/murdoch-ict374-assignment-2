@@ -22,7 +22,7 @@ void test_background() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -46,7 +46,7 @@ void test_combination() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -72,7 +72,7 @@ void test_multiple_command_args() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -100,7 +100,7 @@ void test_pipes() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -128,7 +128,7 @@ void test_redirection() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -154,7 +154,7 @@ void test_sequential() {
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
     handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
+    run_commands(command_list);
     empty_commands(command_list);
     index++;
   }
@@ -393,7 +393,7 @@ void empty_commands(Command ** commands) {
  * If any of the built-in commands are found, we'll simply run those methods.
  * Otherwise, we'll fork child processes to run the other shell commands.
  */
-void execute_commands(Command ** commands) {
+void run_commands(Command ** commands) {
   int index = 0;
   int pipe_count = 0;
   Command * command;
@@ -434,6 +434,22 @@ void execute_commands(Command ** commands) {
 }
 
 /**
+ * Runs 'execvp' on command struct and sets redirection if any.
+ * @param {Command *} command
+ */
+void execute_command(Command * command) {
+  if (command->stdin != NULL || command->stdout != NULL) {
+    set_redirection(command);
+  }
+
+  // print error if we're unable to execute the command
+  if (execvp(command->name, command->argv) < 0) {
+    fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
+    exit(1);
+  }
+}
+
+/**
  * Creates child processes and pipes between them.
  * @param {Command **} piped_commands
  * @param {int}        count
@@ -468,7 +484,6 @@ void create_piped_processes(Command ** piped_commands, int count) {
     }
 
     if (pid == 0) {
-      //printf("create_process | %s | %d\n", command->name, getpid());
       /**
        * Connect appropriate descriptors to relevant pipe ends.
        *
@@ -488,22 +503,16 @@ void create_piped_processes(Command ** piped_commands, int count) {
         dup2(pipes[i][1], 1);     // write into [1] of next pipe
       }
 
-      //
-      if (command->stdin != NULL || command->stdout != NULL) {
-        set_redirection(command);
-      }
-
       // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
       for (j = 0; j < num_of_pipes; j++) {
         close(pipes[j][0]);
         close(pipes[j][1]);
       }
 
-      // print error if we're unable to execute the command
-      if (execvp(command->name, command->argv) < 0) {
-        fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
-        exit(1);
-      }
+      execute_command(command);
+    } else if (pid < 0) {
+      perror("Error forking");
+      exit(1);
     }
 
     // save the child process ID
@@ -543,16 +552,7 @@ void create_process(Command * command) {
   pid = fork();
 
   if (pid == 0) {
-    //printf("create_process | %s | %d\n", command->name, getpid());
-    if (command->stdin != NULL || command->stdout != NULL) {
-      set_redirection(command);
-    }
-
-    // print error if we're unable to execute the command
-    if (execvp(command->name, command->argv) < 0) {
-      fprintf(stderr, "%s: %s\n", command->name, strerror(errno));
-      exit(1);
-    }
+    execute_command(command);
   } else if (pid < 0) {
     perror("Error forking");
     exit(1);
@@ -610,7 +610,7 @@ int main(int argc, char * argv[]) {
       toggle_signal_block(SIG_BLOCK, SIGCHLD);
 
       handle_command_line(input, 0, 0, 0, command_list);
-      execute_commands(command_list);
+      run_commands(command_list);
       empty_commands(command_list);
 
       // unblock SIGCHLD so that we may catch completed background processes
