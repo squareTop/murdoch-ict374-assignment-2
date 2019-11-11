@@ -216,9 +216,8 @@ void change_directory(char * input) {
  * @return {int}
  */
 int print_working_directory() {
-  char current_dir[1024];
-  getcwd(current_dir, 1024);
-  printf("%s\n", current_dir);
+  char dir[BUF_SIZE];
+  printf("%s\n", getcwd(dir, BUF_SIZE));
   return 0;
 }
 
