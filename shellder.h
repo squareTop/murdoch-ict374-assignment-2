@@ -26,6 +26,7 @@ Command * command_list[MAX_COMMANDS];
 /**
  * Methods
  */
+void close_pipes(int pipes[][2], int count);
 void collect_children();
 void create_piped_processes(Command ** piped_commands, int count);
 void create_process(Command * command);

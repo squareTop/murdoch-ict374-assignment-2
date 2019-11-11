@@ -456,10 +456,9 @@ void execute_command(Command * command) {
  */
 void create_piped_processes(Command ** piped_commands, int count) {
   pid_t pid;
-  int i, j;
+  int i;
   int status;
   int pids[count];
-
   int is_background = 0;
   int num_of_pipes = count - 1;
   int pipes[num_of_pipes][2];
@@ -504,10 +503,7 @@ void create_piped_processes(Command ** piped_commands, int count) {
       }
 
       // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
-      for (j = 0; j < num_of_pipes; j++) {
-        close(pipes[j][0]);
-        close(pipes[j][1]);
-      }
+      close_pipes(pipes, num_of_pipes);
 
       execute_command(command);
     } else if (pid < 0) {
@@ -520,10 +516,7 @@ void create_piped_processes(Command ** piped_commands, int count) {
   }
 
   // we need to close the pipes else the process "hangs"; can't write/read if the other end is open.
-  for (i = 0; i < num_of_pipes; i++) {
-    close(pipes[i][0]);
-    close(pipes[i][1]);
-  }
+  close_pipes(pipes, num_of_pipes);
 
   /*
    * Wait for each child process created previously.
@@ -537,6 +530,20 @@ void create_piped_processes(Command ** piped_commands, int count) {
     for (i = 0; i < count; i++) {
       waitpid(pids[i], &status, 0);
     }
+  }
+}
+
+/**
+ * Close both ends of all pipes.
+ * @param {int [][2]} pipes
+ * @param {int}       count
+ */
+void close_pipes(int pipes[][2], int count) {
+  int i;
+
+  for (i = 0; i < count; i++) {
+    close(pipes[i][0]);
+    close(pipes[i][1]);
   }
 }
 
