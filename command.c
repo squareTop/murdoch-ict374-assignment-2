@@ -34,14 +34,35 @@ int get_arguments(char * input, Command * command) {
   token = strtok(input, white_space);
 
   while (token != NULL) {
-    // duplicate string and add to arguments array
-    command->argv[argument_count] = strdup(token);
+    /**
+     * Searches for all pathnames matching pattern.
+     * Satisfies:
+     * - Issue #9
+     * - Requirement #6
+     * - Marking guide #5
+     */
+    if (index(token, WILDCARD_ALL) != NULL || index(token, WILDCARD_EXACT) != NULL) {
+      glob_t result;
+
+      glob(token, 0, NULL, &result);
+
+      // add expanded patterns to argv
+      for (int i = 0; i < result.gl_pathc; i++) {
+        command->argv[argument_count] = strdup(result.gl_pathv[i]);
+        argument_count++;
+      }
+
+      globfree(&result);
+    } else {
+      // duplicate string and add to arguments array
+      command->argv[argument_count] = strdup(token);
+
+      // increment count
+      argument_count++;
+    }
 
     // get the next argument
     token = strtok(NULL, white_space);
-
-    // increment count
-    argument_count++;
   }
 
   return argument_count;

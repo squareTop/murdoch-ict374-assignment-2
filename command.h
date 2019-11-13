@@ -1,3 +1,4 @@
+#include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +8,8 @@
 #define SEPARATOR_OUTPUT     ">"
 #define SEPARATOR_PIPE       "|"
 #define SEPARATOR_SEQUENTIAL ";"
+#define WILDCARD_ALL         '*'
+#define WILDCARD_EXACT       '?'
 #define MAX_COMMANDS  100
 #define MAX_ARGUMENTS 1000
 
