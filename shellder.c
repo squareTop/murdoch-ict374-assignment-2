@@ -2,7 +2,7 @@
 
 /**
  * Test that the program can run processes in the background, like "sleep 10 &".
- * Should satisfy:
+ * Satisfies:
  * - Issue #8
  * - Requirement #9
  * - Marking guide #7
@@ -30,7 +30,7 @@ void test_background() {
 
 /**
  * Test that the program can run a combination of commands.
- * Should satisfy:
+ * Satisfies:
  * - Issue #14
  * - Requirement #8, 9, 10
  * - Marking guide #12
@@ -55,7 +55,7 @@ void test_combination() {
 /**
  * Test that the program can correctly process commands with multiple arguments,
  * like "% ls -l -a -h"
- * Should satisfy:
+ * Satisfies:
  * - Issue #11
  * - Requirement #(N/A)
  * - Marking guide #4
@@ -81,7 +81,7 @@ void test_multiple_command_args() {
 /**
  * Test that the program can execute piped commands.
  * Example: "ps -ef | grep usr | head".
- * Should satisfy:
+ * Satisfies:
  * - Issue #7, #13
  * - Requirement #8
  * - Marking guide #10, #11
@@ -109,7 +109,7 @@ void test_pipes() {
 /**
  * Test that the program can perform redirection (input or output).
  * Example: "cat foo > bar", "cat < foo".
- * Should satisfy:
+ * Satisfies:
  * - Issue #6
  * - Requirement #7
  * - Marking guide #8, 9
@@ -136,7 +136,7 @@ void test_redirection() {
 
 /**
  * Test that the program can run commands sequentially. (e.g. % ps; ls)
- * Should satisfy:
+ * Satisfies:
  * - Issue #10
  * - Requirement #10
  * - Marking guide #6
@@ -163,7 +163,7 @@ void test_sequential() {
 /**
  * Changes prompt name. Does nothing if argument is an empty string.
  * Returns 0 if changed, 1 if not.
- * Should satisfy:
+ * Satisfies:
  * - Issue #1
  * - Requirement #3
  * - Marking guide #3
@@ -183,7 +183,7 @@ int prompt(char * input) {
 /**
  * Changes working directory, which will be set to the user's home directory
  * if the argument "input" is empty.
- * Should satisfy:
+ * Satisfies:
  * - Issue #3
  * - Requirement #5
  * - Marking guide #3
@@ -208,7 +208,7 @@ void change_directory(char * input) {
 
 /**
  * Prints current working directory.
- * Should satisfy:
+ * Satisfies:
  * - Issue #2
  * - Requirement #4
  * - Marking guide #3
@@ -261,7 +261,7 @@ int set_redirection(Command * command) {
 
 /**
  * Recursively collect background processes (zombies).
- * Should satisfy:
+ * Satisfies:
  * - Issue #16
  * - Marking guide #14
  */
@@ -560,7 +560,7 @@ void create_process(Command * command) {
 
   /**
    * Parent only waits if command is meant to run in the background.
-   * Should satisfy:
+   * Satisfies:
    * - Issue #8
    * - Requirement #9
    * - Marking guide #7
