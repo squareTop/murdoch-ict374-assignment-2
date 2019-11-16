@@ -166,9 +166,9 @@ void test_10_11() {
     "cat /tmp/foo | sort",
     "cat /tmp/foo | sort -r",
     "cat /tmp/foo | sort | sort -r | grep line",
-    "cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat",
-    "cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat > junk",
-    "cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | grep line",
+    "cat | cat | cat | cat | cat | cat | cat | cat",
+    "cat | cat | cat | cat | cat | cat | cat | cat > junk",
+    "cat | cat | cat | cat | cat | cat | cat | cat | grep line",
     NULL
   };
 
@@ -565,22 +565,22 @@ int main(int argc, char * argv[]) {
   char * input_pointer = NULL;
 
   // Tests;
-  printf("Running tests 2 and 3..\n");
-  test_2_3();
-  printf("Running test 4..\n");
-  test_4();
-  printf("Running test 5..\n");
-  test_5();
-  printf("Running test 6..\n");
-  test_6();
-  printf("Running test 7..\n");
-  test_7();
-  printf("Running tests 8 and 9..\n");
-  test_8_9();
-  printf("Running tests 10 and 11..\n");
-  test_10_11();
-  printf("Running test 12..\n");
-  test_12();
+//  printf("Running tests 2 and 3..\n");
+//  test_2_3();
+//  printf("Running test 4..\n");
+//  test_4();
+//  printf("Running test 5..\n");
+//  test_5();
+//  printf("Running test 6..\n");
+//  test_6();
+//  printf("Running test 7..\n");
+//  test_7();
+//  printf("Running tests 8 and 9..\n");
+//  test_8_9();
+//  printf("Running tests 10 and 11..\n");
+//  test_10_11();
+//  printf("Running test 12..\n");
+//  test_12();
 
   setup_signals();
 
