@@ -8,7 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <wordexp.h>
-#include "command.h"
+#include "program.h"
 
 #define DEBUG 0
 #define BUF_SIZE 256
@@ -20,7 +20,7 @@
 /**
  * Global variables
  */
-char * shell_name = "%";
+char * shell_name = "$";
 Command * command_list[MAX_COMMANDS];
 
 /**
@@ -48,9 +48,11 @@ int  prompt(char * input);
  * Methods: tests
  * These tests help verify that we satisfy project requirements.
  */
-void test_background();
-void test_combination();
-void test_multiple_command_args();
-void test_pipes();
-void test_redirection();
-void test_sequential();
+void test_2_3();
+void test_4();
+void test_5();
+void test_6();
+void test_7();
+void test_8_9();
+void test_10_11();
+void test_12();

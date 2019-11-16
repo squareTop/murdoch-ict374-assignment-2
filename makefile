@@ -1,5 +1,4 @@
-# makefile for shellder
+# makefile for myshell
 
-shellder: command.h shellder.h command.c shellder.c
-	gcc -Wall command.c shellder.c -o shellder
-
+myshell: program.h myshell.h program.c myshell.c
+	gcc -Wall program.c myshell.c -o myshell

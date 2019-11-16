@@ -1,4 +1,4 @@
-#include "command.h"
+#include "program.h"
 
 /**
  * Helper command that prints Command attributes.
