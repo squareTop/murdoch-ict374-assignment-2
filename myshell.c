@@ -7,7 +7,7 @@
 void test_2_3() {
   int index = 0;
   char command[BUF_SIZE];
-  char * test_commands[10] = {
+  char * test_commands[11] = {
     "ls",
     "ps",
     "prompt myshell",
@@ -156,7 +156,7 @@ void test_8_9() {
 void test_10_11() {
   int index = 0;
   char command[BUF_SIZE];
-  char * test_commands[5] = {
+  char * test_commands[13] = {
     "ps -ef | head",
     "ps -ef | grep usr | head",
     "ps -ef | grep usr | head -6 | tail -3",
