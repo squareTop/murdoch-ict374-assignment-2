@@ -20,7 +20,7 @@
 /**
  * Global variables
  */
-char * shell_name = "$";
+char * shell_name = "%";
 Command * command_list[MAX_COMMANDS];
 
 /**
