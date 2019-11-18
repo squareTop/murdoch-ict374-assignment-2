@@ -25,14 +25,14 @@ void test_2_3() {
   char * test_commands[11] = {
     "ls",
     "ps",
-    "chpr myshell",
+    "prompt myshell",
     "cd /tmp",
     "pwd",
     "cd",
     "pwd",
     "cd ..",
     "pwd",
-    "echo a bb ccc dddd 1 22 333 4444 555555",
+    "echo a bb ccc dddd 1 22 333 4444 test for marking guide #2 and #3",
     NULL
   };
 
@@ -52,7 +52,7 @@ void test_4() {
   char command[BUF_SIZE];
   char * test_commands[3] = {
     "ls -l -a -h -i -g -m -n -p",
-    "echo a bb ccc dddd 1 22 333 4444 555555",
+    "echo a bb ccc dddd 1 22 333 4444 this is test for marking guide #4",
     NULL
   };
 
