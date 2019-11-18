@@ -25,7 +25,7 @@ void test_2_3() {
   char * test_commands[11] = {
     "ls",
     "ps",
-    "prompt myshell",
+    "chpr myshell",
     "cd /tmp",
     "pwd",
     "cd",
@@ -38,9 +38,9 @@ void test_2_3() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -58,9 +58,9 @@ void test_4() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -81,9 +81,9 @@ void test_5() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -102,9 +102,9 @@ void test_6() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -125,9 +125,9 @@ void test_7() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -147,9 +147,9 @@ void test_8_9() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -177,9 +177,9 @@ void test_10_11() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -197,9 +197,9 @@ void test_12() {
 
   while (test_commands[index] != NULL) {
     strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_list);
-    execute_commands(command_list);
-    empty_commands(command_list);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
     index++;
   }
 }
@@ -217,18 +217,18 @@ void test_12() {
 
 
 // Changes prompt name.
-int prompt(char * input) {
+int chpr(char * input) {
   if (input != NULL && strlen(input) > 0) {
-    shell_name = strdup(input);
+    prompt_name = strdup(input);
     return 0;
   }
 
   return 1;
 }
 
-
+/*
 // Imitates cd command
-void change_directory(char * input) {
+void chdirect(char * input) {
   if (input != NULL) {
     wordexp_t word_expansion;
     wordexp(input, &word_expansion, 0);
@@ -243,8 +243,9 @@ void change_directory(char * input) {
     chdir(input);
   }
 }
+*/
 
-
+/*
 // Imitates pwd
 int print_working_directory() {
   char current_dir[1024];
@@ -252,7 +253,7 @@ int print_working_directory() {
   printf("%s\n", current_dir);
   return 0;
 }
-
+*/
 
 // Opens a file for standard input or output.
 int set_redirection(Command * command) {
@@ -399,18 +400,38 @@ void execute_commands(Command ** commands) {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, CHANGE_DIR) == 0) {
-      change_directory(command->argv[1]);
-    } else if (strcmp(command->name, EXIT) == 0) {
-      exit(0);
-    } else if (strcmp(command->name, PRINT_DIR) == 0) {
-      print_working_directory();
-    } else if (strcmp(command->name, PROMPT) == 0) {
-      prompt(command->argv[1]);
-    } else {
+        //chdirect(command->argv[1]);
+        char * path;
+        path = command->argv[1];
+        if(path){
+          path = command->argv[1];
+          int r = chdir(path);
+          if (r<0)
+            printf("Invalid Directory.\n");
+          else {
+            path = getenv("HOME");
+            chdir(path);
+          }
+        }
+    }
+    else if (strcmp(command->name, EXIT) == 0) {
+        exit(0);
+    }
+    else if (strcmp(command->name, PRINT_DIR) == 0) {
+        //print_working_directory();
+        char currentDir[1024];
+        getcwd(currentDir, 1024);
+        printf("Current working dir: %s\n", currentDir);
+    }
+    else if (strcmp(command->name, PROMPT) == 0) {
+        chpr(command->argv[1]);
+    }
+    else {
       if (command->pipe > 0) {
         piped_commands[pipe_count] = command;
         pipe_count++;
-      } else {
+      }
+      else {
         if (pipe_count > 0) {
           piped_commands[pipe_count++] = command;
           create_piped_processes(piped_commands, pipe_count);
@@ -421,7 +442,8 @@ void execute_commands(Command ** commands) {
           }
 
           pipe_count = 0;
-        } else {
+        }
+        else {
           create_process(command);
         }
       }
@@ -564,7 +586,7 @@ int main(int argc, char * argv[]) {
   setup_signals();
 
   while (1) {
-    printf("%s ", shell_name);
+    printf("%s ", prompt_name);
     input_pointer = fgets(input, BUF_SIZE, stdin);
 
     while (input_pointer == NULL && errno == EINTR) {
@@ -579,9 +601,9 @@ int main(int argc, char * argv[]) {
 
       toggle_signal_block(SIG_BLOCK, SIGCHLD);
 
-      handle_command_line(input, 0, 0, 0, command_list);
-      execute_commands(command_list);
-      empty_commands(command_list);
+      handle_command_line(input, 0, 0, 0, command_array);
+      execute_commands(command_array);
+      empty_commands(command_array);
 
       toggle_signal_block(SIG_UNBLOCK, SIGCHLD);
     }

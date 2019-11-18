@@ -22,14 +22,14 @@
 
 #define BUF_SIZE 256
 #define CHANGE_DIR "cd"
-#define EXIT       "exit"
 #define PRINT_DIR  "pwd"
 #define PROMPT     "prompt"
+#define EXIT       "exit"
 
 
 // Global variables
-char * shell_name = "%";
-Command * command_list[MAX_COMMANDS];
+char * prompt_name = "%";
+Command * command_array[MAX_COMMANDS];
 
 
 /*
@@ -39,9 +39,9 @@ Command * command_list[MAX_COMMANDS];
 *
 *
 */
-int  prompt(char * input);
-void change_directory(char * input);
-int print_working_directory();
+int chpr(char * input);
+//void chdirect(char * input);
+//int print_working_directory();
 int set_redirection(Command * command);
 void collect_children();
 void handle_signals();
