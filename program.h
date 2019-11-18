@@ -26,14 +26,16 @@ typedef struct CommandStruct {
   int    redirection;
 } Command;
 
+// Populates a Command struct with the found/required attributes and returns a pointer to that instance.
 Command * make_command(char * input, int background, int pipe);
+
+// Splits a string by whitespace to extract arguments (argv) and saves them into the Command instance provided.
 int    get_arguments(char * input, Command * command);
+
+// Searches for a separator (;&|) and returns the character if found.
 char * get_separator(char * input);
-void   print_command(Command * command);
-void   handle_command_line(
-  char * input,
-  int background,
-  int pipe,
-  int iteration,
-  Command ** commands
-);
+
+//void   print_command(Command * command);
+
+// Processes a command line entry, extracts jobs and commands, and then saves these commands into an array containing Command structs.
+void   handle_command_line(char * input, int background, int pipe, int iteration, Command ** commands);

@@ -3,7 +3,7 @@
 /**
  * Helper command that prints Command attributes.
  * @param {Command *} command
- */
+
 void print_command(Command * command) {
   printf("-----------------------------------------------\n");
   printf("| %-24s | %-16s |\n", "Name", command->name);
@@ -18,14 +18,11 @@ void print_command(Command * command) {
   printf("| %-24s | %-16s |\n", "Redirect output",     command->stdout);
   printf("-----------------------------------------------\n");
 }
+*/
 
-/**
- * Splits a string by whitespace to extract arguments (argv) and saves them
- * into the Command instance provided.
- * @param  {char *}    input
- * @param  {Command *} command
- * @return {int}
- */
+
+
+// Splits a string by whitespace to extract arguments (argv) and saves them into the Command instance provided.
 int get_arguments(char * input, Command * command) {
   char * token = NULL;
   int argument_count = 0;
@@ -68,11 +65,8 @@ int get_arguments(char * input, Command * command) {
   return argument_count;
 }
 
-/**
- * Searches for a separator (;&|) and returns the character if found.
- * @param  {char *} input
- * @return {char *}
- */
+
+// Searches for a separator (;&|) and returns the character if found.
 char * get_separator(char * input) {
   char * separator = NULL;
 
@@ -90,14 +84,8 @@ char * get_separator(char * input) {
   return separator;
 }
 
-/**
- * Populates a Command struct with the found/required attributes and returns
- * a pointer to that instance.
- * @param  {char *}    input
- * @param  {int}       background
- * @param  {int}       pipe
- * @return {Command *}
- */
+
+// Populates a Command struct with the found/required attributes and returns a pointer to that instance.
 Command * make_command(char * input, int background, int pipe) {
   char    * token         = NULL;
   char    * stdin_result  = index(input, * SEPARATOR_INPUT);
@@ -143,21 +131,9 @@ Command * make_command(char * input, int background, int pipe) {
   }
 }
 
-/**
- * Processes a command line entry, extracts jobs and commands, and then saves
- * these commands into an array containing Command structs.
- * @param {char *}     input
- * @param {int}        background
- * @param {int}        pipe
- * @param {Command **} commands
- */
-void handle_command_line(
-  char * input,
-  int background,
-  int pipe,
-  int iteration,
-  Command ** commands
-) {
+
+// Processes a command line entry, extracts jobs and commands, and then saves these commands into an array containing Command structs.
+void handle_command_line(char * input, int background, int pipe, int iteration, Command ** commands) {
   int is_background = 0;
   int is_pipe       = 0;
   char * separator  = NULL;
