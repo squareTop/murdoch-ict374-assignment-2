@@ -372,7 +372,8 @@ void execute_commands(Command ** commands) {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, CHANGE_DIR) == 0) {
-      if (command->argv[1] != NULL) {
+      char *input = command->argv[1];
+      if (input != NULL) {
         wordexp_t word_expansion;
         wordexp(input, &word_expansion, 0);
 
