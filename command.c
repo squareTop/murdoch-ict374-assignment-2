@@ -1,26 +1,12 @@
-#include "program.h"
-
-/**
- * Helper command that prints Command attributes.
- * @param {Command *} command
-
-void print_command(Command * command) {
-  printf("-----------------------------------------------\n");
-  printf("| %-24s | %-16s |\n", "Name", command->name);
-  printf("| %-24s | %-16d |\n", "argc", command->argc);
-  for (int i = 0; i < command->argc; i++) {
-    printf("| argv[%d]                  | %-16s |\n", i, command->argv[i]);
-  }
-  printf("| %-24s | %-16d |\n", "Runs in background?", command->background);
-  printf("| %-24s | %-16d |\n", "Pipes to command",    command->pipe);
-  printf("| %-24s | %-16d |\n", "Redirection",         command->redirection);
-  printf("| %-24s | %-16s |\n", "Redirect input",      command->stdin);
-  printf("| %-24s | %-16s |\n", "Redirect output",     command->stdout);
-  printf("-----------------------------------------------\n");
-}
+/*
+*
+* Filename: command.c
+* Authors: Seet Ting Peng and Andrew Loone
+* Date: 18 Nov 2019
+*
 */
 
-
+#include "command.h"
 
 // Splits a string by whitespace to extract arguments (argv) and saves them into the Command instance provided.
 int get_arguments(char * input, Command * command) {

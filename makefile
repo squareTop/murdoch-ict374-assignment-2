@@ -1,4 +1,4 @@
 # makefile for myshell
 
-myshell: program.h myshell.h program.c myshell.c
-	gcc -Wall program.c myshell.c -o myshell
+myshell: command.h myshell.h command.c myshell.c
+	gcc -Wall command.c myshell.c -o myshell

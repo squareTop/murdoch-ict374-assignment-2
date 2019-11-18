@@ -1,3 +1,12 @@
+/*
+*
+* Filename: command.h
+* Authors: Seet Ting Peng and Andrew Loone
+* Date: 18 Nov 2019
+*
+*/
+
+
 #include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,8 +43,6 @@ int    get_arguments(char * input, Command * command);
 
 // Searches for a separator (;&|) and returns the character if found.
 char * get_separator(char * input);
-
-//void   print_command(Command * command);
 
 // Processes a command line entry, extracts jobs and commands, and then saves these commands into an array containing Command structs.
 void   handle_command_line(char * input, int background, int pipe, int iteration, Command ** commands);
