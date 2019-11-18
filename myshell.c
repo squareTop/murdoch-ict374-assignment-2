@@ -160,19 +160,16 @@ void test_8_9() {
 void test_10_11() {
   int index = 0;
   char command[BUF_SIZE];
-  char * test_commands[13] = {
+  char * test_commands[10] = {
     "ps -ef | head",
     "ps -ef | grep usr | head",
     "ps -ef | grep usr | head -6 | tail -3",
     "ps -ef | grep usr | head -4; date",
-    "cat /tmp/foo | cat",
-    "cat /tmp/foo | grep line",
-    "cat /tmp/foo | sort",
-    "cat /tmp/foo | sort -r",
-    "cat /tmp/foo | sort | sort -r | grep line",
-    "cat | cat | cat | cat | cat | cat | cat | cat",
-    "cat | cat | cat | cat | cat | cat | cat | cat > junk",
-    "cat | cat | cat | cat | cat | cat | cat | cat | grep line",
+    "cat tmp/foo | cat",
+    "cat tmp/foo | grep line",
+    "cat tmp/foo | sort",
+    "cat tmp/foo | sort -r",
+    "cat tmp/foo | sort | sort -r | grep line",
     NULL
   };
 
