@@ -388,10 +388,7 @@ void execute_commands(Command ** commands) {
         input = command->argv[1];
         if (input != NULL && strlen(input) > 0) {
           prompt_name = strdup(input);
-          return 0;
         }
-
-        return 1;
     }
     else {
       if (command->pipe > 0) {
