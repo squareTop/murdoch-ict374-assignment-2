@@ -17,7 +17,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <wordexp.h>
-#include "program.h"
+#include "command.h"
 
 
 #define BUF_SIZE 256
