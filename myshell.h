@@ -40,8 +40,6 @@ Command * command_array[MAX_COMMANDS];
 *
 */
 int chpr(char * input);
-//void chdirect(char * input);
-//int print_working_directory();
 int set_redirection(Command * command);
 void collect_children();
 void handle_signals();

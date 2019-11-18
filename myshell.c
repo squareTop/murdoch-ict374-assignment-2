@@ -226,34 +226,6 @@ int chpr(char * input) {
   return 1;
 }
 
-/*
-// Imitates cd command
-void chdirect(char * input) {
-  if (input != NULL) {
-    wordexp_t word_expansion;
-    wordexp(input, &word_expansion, 0);
-
-    if (chdir(word_expansion.we_wordv[0]) < 0) {
-      printf("cd: %s: Not a directory.\n", word_expansion.we_wordv[0]);
-    }
-
-    wordfree(&word_expansion);
-  } else {
-    input = getenv("HOME");
-    chdir(input);
-  }
-}
-*/
-
-/*
-// Imitates pwd
-int print_working_directory() {
-  char current_dir[1024];
-  getcwd(current_dir, 1024);
-  printf("%s\n", current_dir);
-  return 0;
-}
-*/
 
 // Opens a file for standard input or output.
 int set_redirection(Command * command) {
@@ -400,28 +372,27 @@ void execute_commands(Command ** commands) {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, CHANGE_DIR) == 0) {
-        //chdirect(command->argv[1]);
-        char * path;
-        path = command->argv[1];
-        if(path){
-          path = command->argv[1];
-          int r = chdir(path);
-          if (r<0)
-            printf("Invalid Directory.\n");
-          else {
-            path = getenv("HOME");
-            chdir(path);
-          }
+      if (input != NULL) {
+        wordexp_t word_expansion;
+        wordexp(input, &word_expansion, 0);
+
+        if (chdir(word_expansion.we_wordv[0]) < 0) {
+          printf("cd: %s: Not a directory.\n", word_expansion.we_wordv[0]);
         }
+
+        wordfree(&word_expansion);
+      } else {
+        input = getenv("HOME");
+        chdir(input);
+      }
     }
     else if (strcmp(command->name, EXIT) == 0) {
         exit(0);
     }
     else if (strcmp(command->name, PRINT_DIR) == 0) {
-        //print_working_directory();
-        char currentDir[1024];
-        getcwd(currentDir, 1024);
-        printf("Current working dir: %s\n", currentDir);
+        char current_dir[1024];
+        getcwd(current_dir, 1024);
+        printf("%s\n", current_dir);
     }
     else if (strcmp(command->name, PROMPT) == 0) {
         chpr(command->argv[1]);
