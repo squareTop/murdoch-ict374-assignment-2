@@ -1,9 +1,24 @@
+/*
+*
+* Filename: myshell.c
+* Author: Seet Ting Peng & Andrew Loone
+* Date: 18 Nov 2019
+*
+*/
+
+
 #include "myshell.h"
 
-/**
- * Test that the program can correctly process basic and built-in commands.
- * Marking guide #2 & #3
- */
+
+/*
+*
+*
+* Test methods
+*
+*
+*/
+
+//Marking guide #2 & #3 - Test that the program can correctly process basic and built-in commands.
 void test_2_3() {
   int index = 0;
   char command[BUF_SIZE];
@@ -30,10 +45,8 @@ void test_2_3() {
   }
 }
 
-/**
- * Test that the program can correctly process commands with multiple arguments.
- * Marking guide #4
- */
+
+// Marking guide #4 - Test that the program can correctly process commands with multiple arguments.
 void test_4() {
   int index = 0;
   char command[BUF_SIZE];
@@ -52,10 +65,8 @@ void test_4() {
   }
 }
 
-/**
- * Test that the program can correctly process commands with Wildcards.
- * Marking guide #5
- */
+
+// Marking guide #5 - Test that the program can correctly process commands with Wildcards.
 void test_5() {
   int index = 0;
   char command[BUF_SIZE];
@@ -77,10 +88,8 @@ void test_5() {
   }
 }
 
-/**
- * Test that the program can run commands sequentially.
- * Marking guide #6
- */
+
+// Marking guide #6 - Test that the program can run commands sequentially.
 void test_6() {
   int index = 0;
   char command[BUF_SIZE];
@@ -100,10 +109,8 @@ void test_6() {
   }
 }
 
-/**
- * Test that the program can run processes in the background.
- * Marking guide #7
- */
+
+// Marking guide #7 - Test that the program can run processes in the background.
 void test_7() {
   int index = 0;
   char command[BUF_SIZE];
@@ -125,10 +132,8 @@ void test_7() {
   }
 }
 
-/**
- * Test that the program can perform redirection (input or output).
- * Marking guide #8 & #9
- */
+
+// Marking guide #8 & #9 - Test that the program can perform redirection (input or output).
 void test_8_9() {
   int index = 0;
   char command[BUF_SIZE];
@@ -149,10 +154,8 @@ void test_8_9() {
   }
 }
 
-/**
- * Test that the program can execute simple and long pipelines.
- * Marking guide #10 & #11
- */
+
+// Marking guide #10 & #11 - Test that the program can execute simple and long pipelines.
 void test_10_11() {
   int index = 0;
   char command[BUF_SIZE];
@@ -181,10 +184,8 @@ void test_10_11() {
   }
 }
 
-/**
- * Test that the program can run combinations of commands.
- * Marking guide #12
- */
+
+// Marking guide #12 - Test that the program can run combinations of commands.
 void test_12() {
   int index = 0;
   char command[BUF_SIZE];
@@ -206,7 +207,7 @@ void test_12() {
 
 
 
-/**
+/*
 *
 *
 * Helper functions
@@ -215,11 +216,7 @@ void test_12() {
 */
 
 
-
-
-/**
- * Changes prompt name.
- */
+// Changes prompt name.
 int prompt(char * input) {
   if (input != NULL && strlen(input) > 0) {
     shell_name = strdup(input);
@@ -229,9 +226,8 @@ int prompt(char * input) {
   return 1;
 }
 
-/**
- * Imitates cd command
- */
+
+// Imitates cd command
 void change_directory(char * input) {
   if (input != NULL) {
     wordexp_t word_expansion;
@@ -248,9 +244,8 @@ void change_directory(char * input) {
   }
 }
 
-/**
- * Imitates pwd
- */
+
+// Imitates pwd
 int print_working_directory() {
   char current_dir[1024];
   getcwd(current_dir, 1024);
@@ -258,12 +253,8 @@ int print_working_directory() {
   return 0;
 }
 
-/**
- * Opens a file for standard input or output.
- * Returns 0 if successfully done, 1 if not.
- * @param  {Command *} command
- * @return {int}
- */
+
+// Opens a file for standard input or output.
 int set_redirection(Command * command) {
   char * file_name = NULL;
   int descriptor   = command->redirection;
@@ -295,9 +286,8 @@ int set_redirection(Command * command) {
   return 0;
 }
 
-/**
- * Recursively collect zombies.
- */
+
+// Recursively collect zombies.
 void collect_children() {
   int collect = 1;
   int status;
@@ -312,18 +302,16 @@ void collect_children() {
   }
 }
 
-/**
- * Handle SIGCHLD.
- */
+
+// Handle SIGCHLD.
 void handle_signals(int signal_number) {
   if (signal_number == SIGCHLD) {
     collect_children();
   }
 }
 
-/**
- * Ignore interrupt, quit, and stop signals, catch child termination signal.
- */
+
+// Ignore interrupt, quit, and stop signals, catch child termination signal.
 int setup_signals() {
   struct sigaction act;
   sigset_t signal_set;
@@ -337,9 +325,6 @@ int setup_signals() {
     exit(1);
   }
 
-  if (DEBUG == 1) {
-    return 0;
-  }
 
   sigemptyset(&signal_set);
   sigaddset(&signal_set, SIGINT);
@@ -354,9 +339,8 @@ int setup_signals() {
   return 0;
 }
 
-/**
- * Blocks or unblocks a signal.
- */
+
+// Blocks or unblocks a signal.
 int toggle_signal_block(int how, int signal_number) {
   sigset_t signal_set;
   sigemptyset(&signal_set);
@@ -370,9 +354,8 @@ int toggle_signal_block(int how, int signal_number) {
   }
 }
 
-/**
- * Empties the command list so that it may be used for the next round of command line processing.
- */
+
+// Empties the command list so that it may be used for the next round of command line processing.
 void empty_commands(Command ** commands) {
   int index = 0;
   int argv_index = 0;
@@ -406,9 +389,8 @@ void empty_commands(Command ** commands) {
   }
 }
 
-/**
- * Create child processes to run the other shell commands found in list.
- */
+
+// Create child processes to run the other shell commands found in list.
 void execute_commands(Command ** commands) {
   int index = 0;
   int pipe_count = 0;
@@ -416,13 +398,13 @@ void execute_commands(Command ** commands) {
   Command * piped_commands[MAX_COMMANDS];
 
   while ((command = commands[index++]) != NULL) {
-    if (strcmp(command->name, BUILTIN_CHANGE_DIR) == 0) {
+    if (strcmp(command->name, CHANGE_DIR) == 0) {
       change_directory(command->argv[1]);
-    } else if (strcmp(command->name, BUILTIN_EXIT) == 0) {
+    } else if (strcmp(command->name, EXIT) == 0) {
       exit(0);
-    } else if (strcmp(command->name, BUILTIN_PRINT_DIR) == 0) {
+    } else if (strcmp(command->name, PRINT_DIR) == 0) {
       print_working_directory();
-    } else if (strcmp(command->name, BUILTIN_PROMPT) == 0) {
+    } else if (strcmp(command->name, PROMPT) == 0) {
       prompt(command->argv[1]);
     } else {
       if (command->pipe > 0) {
@@ -449,9 +431,8 @@ void execute_commands(Command ** commands) {
   free(command);
 }
 
-/**
- * Creates child processes.
- */
+
+// Creates child processes.
 void create_piped_processes(Command ** piped_commands, int count) {
   pid_t pid;
   int i, j;
@@ -526,9 +507,8 @@ void create_piped_processes(Command ** piped_commands, int count) {
   }
 }
 
-/**
- * Creates child process that runs command.
- */
+
+// Creates child process that runs command.
 void create_process(Command * command) {
   pid_t pid;
   int status;
@@ -557,9 +537,8 @@ void create_process(Command * command) {
   }
 }
 
-/**
- * Main program
- */
+
+// Main program
 int main(int argc, char * argv[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
