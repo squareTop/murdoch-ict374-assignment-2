@@ -137,7 +137,7 @@ void test_7() {
 void test_8_9() {
   int index = 0;
   char command[BUF_SIZE];
-  char * test_commands[5] = {
+  char * test_commands[6] = {
     "cat < tmp/foo",
     "grep line < tmp/foo",
     "ls -l > tmp/junk",
