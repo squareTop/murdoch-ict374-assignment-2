@@ -30,7 +30,7 @@
 // Global variables
 char * prompt_name = "%";
 Command * command_array[MAX_COMMANDS];
-
+char * input;
 
 /*
 *
@@ -39,7 +39,6 @@ Command * command_array[MAX_COMMANDS];
 *
 *
 */
-int chpr(char * input);
 int set_redirection(Command * command);
 void collect_children();
 void handle_signals();

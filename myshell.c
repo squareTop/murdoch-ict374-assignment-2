@@ -51,7 +51,7 @@ void test_4() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[3] = {
-    "ls -l -a -h -i -e -g -m -n -p",
+    "ls -l -a -h -i -g -m -n -p",
     "echo a bb ccc dddd 1 22 333 4444 555555",
     NULL
   };
@@ -216,17 +216,6 @@ void test_12() {
 */
 
 
-// Changes prompt name.
-int chpr(char * input) {
-  if (input != NULL && strlen(input) > 0) {
-    prompt_name = strdup(input);
-    return 0;
-  }
-
-  return 1;
-}
-
-
 // Opens a file for standard input or output.
 int set_redirection(Command * command) {
   char * file_name = NULL;
@@ -372,7 +361,7 @@ void execute_commands(Command ** commands) {
 
   while ((command = commands[index++]) != NULL) {
     if (strcmp(command->name, CHANGE_DIR) == 0) {
-      char *input = command->argv[1];
+      input = command->argv[1];
       if (input != NULL) {
         wordexp_t word_expansion;
         wordexp(input, &word_expansion, 0);
@@ -396,7 +385,13 @@ void execute_commands(Command ** commands) {
         printf("%s\n", current_dir);
     }
     else if (strcmp(command->name, PROMPT) == 0) {
-        chpr(command->argv[1]);
+        input = command->argv[1];
+        if (input != NULL && strlen(input) > 0) {
+          prompt_name = strdup(input);
+          return 0;
+        }
+
+        return 1;
     }
     else {
       if (command->pipe > 0) {
