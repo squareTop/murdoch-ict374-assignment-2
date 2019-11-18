@@ -26,7 +26,7 @@ void test_2_3() {
     "ls",
     "ps",
     "prompt myshell",
-    "cd /tmp",
+    "cd tmp",
     "pwd",
     "cd",
     "pwd",
@@ -71,11 +71,11 @@ void test_5() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[6] = {
-    "ls -l /tmp/*.c",
-    "ls -l /tmp/a*c",
-    "ls -l /tmp/abc.?",
-    "ls -l /tmp/abc*.?",
-    "ls -l /dev/*",
+    "ls -l tmp/*.c",
+    "ls -l tmp/a*c",
+    "ls -l tmp/abc.?",
+    "ls -l tmp/abc*.?",
+    "ls -l dev/*",
     NULL
   };
 
