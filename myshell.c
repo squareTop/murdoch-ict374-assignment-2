@@ -18,8 +18,9 @@
 *
 */
 
-//Marking guide #2 & #3 - Test that the program can correctly process basic and built-in commands.
-void test_2_3() {
+
+//Requirement 01, 02 & 03 - Test that the program can correctly process basic and built-in commands and reconfigurable shell prompt.
+void test_1_2_3() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[11] = {
@@ -46,28 +47,9 @@ void test_2_3() {
 }
 
 
-// Marking guide #4 - Test that the program can correctly process commands with multiple arguments.
+
+// Requirement 04 - Test that the program can correctly process commands with Wildcards.
 void test_4() {
-  int index = 0;
-  char command[BUF_SIZE];
-  char * test_commands[3] = {
-    "ls -l -a -h -i -g -m -n -p",
-    "echo a bb ccc dddd 1 22 333 4444 this is test for marking guide #4",
-    NULL
-  };
-
-  while (test_commands[index] != NULL) {
-    strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_array);
-    execute_commands(command_array);
-    empty_commands(command_array);
-    index++;
-  }
-}
-
-
-// Marking guide #5 - Test that the program can correctly process commands with Wildcards.
-void test_5() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[6] = {
@@ -89,52 +71,8 @@ void test_5() {
 }
 
 
-// Marking guide #6 - Test that the program can run commands sequentially.
-void test_6() {
-  int index = 0;
-  char command[BUF_SIZE];
-  char * test_commands[4] = {
-    "sleep 3 ; echo hello",
-    "sleep 3 ; ls -l",
-    "sleep 3 ; echo hello1 ; sleep 3 ; echo hello2",
-    NULL
-  };
-
-  while (test_commands[index] != NULL) {
-    strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_array);
-    execute_commands(command_array);
-    empty_commands(command_array);
-    index++;
-  }
-}
-
-
-// Marking guide #7 - Test that the program can run processes in the background.
-void test_7() {
-  int index = 0;
-  char command[BUF_SIZE];
-  char * test_commands[6] = {
-    "echo hello & echo world",
-    "sleep 10 & echo hello",
-    "ps & ls",
-    "echo ps-command & ps & echo ls-command & ls -l",
-    "sleep 10 &",
-    NULL
-  };
-
-  while (test_commands[index] != NULL) {
-    strcpy(command, test_commands[index]);
-    handle_command_line(command, 0, 0, 0, command_array);
-    execute_commands(command_array);
-    empty_commands(command_array);
-    index++;
-  }
-}
-
-
-// Marking guide #8 & #9 - Test that the program can perform redirection (input or output).
-void test_8_9() {
+// Requirement 05 - Test that the program can perform redirection (input or output).
+void test_5() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[6] = {
@@ -156,8 +94,8 @@ void test_8_9() {
 }
 
 
-// Marking guide #10 & #11 - Test that the program can execute simple and long pipelines.
-void test_10_11() {
+// Requirement 06 - Test that the program can execute simple and long pipelines.
+void test_6() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[10] = {
@@ -182,9 +120,58 @@ void test_10_11() {
   }
 }
 
+// Requirement 07 - Test that the program can run processes in the background.
+void test_7() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[6] = {
+    "echo hello & echo world",
+    "sleep 10 & echo hello",
+    "ps & ls",
+    "echo ps-command & ps & echo ls-command & ls -l",
+    "sleep 10 &",
+    NULL
+  };
 
-// Marking guide #12 - Test that the program can run combinations of commands.
-void test_12() {
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
+    index++;
+  }
+}
+
+// Requirement 08 - Test that the program can run commands sequentially.
+void test_8() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[4] = {
+    "sleep 3 ; echo hello",
+    "sleep 3 ; ls -l",
+    "sleep 3 ; echo hello1 ; sleep 3 ; echo hello2",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
+    index++;
+  }
+}
+
+// Requirement 09 - Ensuring shell inherits environment from parent 
+void test_9(char *envp[])
+{
+    for (int i = 0; envp[i] !=NULL; i++)
+	printf("\n%s", envp[i]);
+}
+
+
+// Test that the program can run combinations of commands.
+void test_10() {
   int index = 0;
   char command[BUF_SIZE];
   char * test_commands[3] = {
@@ -202,6 +189,26 @@ void test_12() {
   }
 }
 
+
+
+// Test that the program can correctly process commands with multiple arguments.
+void test_11() {
+  int index = 0;
+  char command[BUF_SIZE];
+  char * test_commands[3] = {
+    "ls -l -a -h -i -g -m -n -p",
+    "echo a bb ccc dddd 1 22 333 4444 this is test for marking guide #4",
+    NULL
+  };
+
+  while (test_commands[index] != NULL) {
+    strcpy(command, test_commands[index]);
+    handle_command_line(command, 0, 0, 0, command_array);
+    execute_commands(command_array);
+    empty_commands(command_array);
+    index++;
+  }
+}
 
 
 
@@ -523,13 +530,13 @@ void create_process(Command * command) {
 
 
 // Main program
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[], char * envp[]) {
   char input[BUF_SIZE];
   char * input_pointer = NULL;
 
   // Tests;
-//  printf("Running tests 2 and 3..\n");
-//  test_2_3();
+//  printf("Running tests 1, 2 and 3..\n");
+//  test_1_2_3();
 //  printf("Running test 4..\n");
 //  test_4();
 //  printf("Running test 5..\n");
@@ -538,12 +545,17 @@ int main(int argc, char * argv[]) {
 //  test_6();
 //  printf("Running test 7..\n");
 //  test_7();
-//  printf("Running tests 8 and 9..\n");
-//  test_8_9();
-//  printf("Running tests 10 and 11..\n");
-//  test_10_11();
-//  printf("Running test 12..\n");
-//  test_12();
+//  printf("Running tests 8..\n");
+//  test_8();
+//  printf("Running tests 9..\n");
+  test_9(envp);
+//  printf("Running tests 10..\n");
+//  test_10();
+//  printf("Running tests 11..\n");
+//  test_11();
+
+
+
 
   setup_signals();
 
