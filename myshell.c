@@ -536,7 +536,7 @@ int main(int argc, char * argv[], char * envp[]) {
 
   // Tests;
 //  printf("Running tests 1, 2 and 3..\n");
-//  test_1_2_3();
+  test_1_2_3();
 //  printf("Running test 4..\n");
 //  test_4();
 //  printf("Running test 5..\n");
@@ -548,7 +548,7 @@ int main(int argc, char * argv[], char * envp[]) {
 //  printf("Running tests 8..\n");
 //  test_8();
 //  printf("Running tests 9..\n");
-  test_9(envp);
+//  test_9(envp);
 //  printf("Running tests 10..\n");
 //  test_10();
 //  printf("Running tests 11..\n");
